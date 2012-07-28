@@ -385,6 +385,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\README"
+			>
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>
