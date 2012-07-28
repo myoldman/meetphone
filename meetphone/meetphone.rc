@@ -1,0 +1,441 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(中华人民共和国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\meetphone.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""      // 标准组件\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\meetphone.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 meetphone"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
+    LTEXT           "meetphone，1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2012",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_MEETPHONE_LOGIN DIALOGEX 0, 0, 158, 186
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "登陆会议服务器"
+MENU IDR_MENU_MAIN
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,13,153,50,14
+    PUSHBUTTON      "取消",IDCANCEL,90,153,50,14
+    CONTROL         "",IDC_STATIC_MAIN,"Static",SS_BITMAP,0,0,13,12
+    LTEXT           "服务器：",IDC_STATIC,13,94,35,16
+    LTEXT           "用户名：",IDC_STATIC,13,123,30,19
+    EDITTEXT        IDC_LOGIN_SERVER,58,94,82,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOGIN_USER,58,123,82,16,ES_AUTOHSCROLL
+END
+
+IDD_MEETPHONE_MAIN DIALOGEX 0, 0, 451, 211
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+MENU IDR_MENU_MAIN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_CONFERENCE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,18,225,187
+    LTEXT           "会议列表",IDC_STATIC,6,4,95,12
+    CONTROL         "",IDC_LIST_MEMBER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,238,18,205,187
+    LTEXT           "成员列表",IDC_STATIC,217,5,95,12
+END
+
+IDD_MEETPHONE_LOG DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "调试日志"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "关闭",IDCANCEL,259,162,50,14
+    CONTROL         "",IDC_LOG,"RichEdit20W",ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER | WS_VSCROLL | WS_TABSTOP,7,7,302,152
+END
+
+IDD_MEETPHONE_SETTING DIALOGEX 0, 0, 314, 254
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "设置"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,262,235,50,14
+    CONTROL         "",IDC_SETTING_TAB,"SysTabControl32",0x0,0,0,312,229
+END
+
+IDD_MEETPHONE_NETWORK DIALOGEX 0, 0, 314, 214
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_PROTO_PORT,161,17,128,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_PROTO_PORT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,289,17,11,15
+    LTEXT           "网络协议和端口",IDC_STATIC,6,4,68,17
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,3,303,102
+    COMBOBOX        IDC_COMBO_PROTOCOL,12,18,146,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "视频 RTP/UDP:",IDC_STATIC,11,34,146,15
+    EDITTEXT        IDC_EDIT_VIDEO_RTP_PORT,161,34,128,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_VIDEO_RTP_PORT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,289,34,11,15
+    CTEXT           "音频 RTP/UDP:",IDC_STATIC,11,50,146,15
+    EDITTEXT        IDC_EDIT_AUDIO_RTP_PORT,161,50,128,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_AUDIO_RTP_PORT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,289,50,11,15
+    CTEXT           "Rtsp 视频 RTP/UDP:",IDC_STATIC,11,66,146,15
+    EDITTEXT        IDC_EDIT_RTSP_VIDEO_RTP_PORT,161,66,128,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_RTSP_VIDEO_RTP_PORT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,289,66,11,15
+    CTEXT           "Rtsp 音频 RTP/UDP:",IDC_STATIC,11,82,146,15
+    EDITTEXT        IDC_EDIT_RTSP_AUDIO_RTP_PORt,161,82,128,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_RTSP_AUDIO_RTP_PORT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,289,82,11,15
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,108,303,102
+    LTEXT           "NAT 及防火墙",IDC_STATIC,6,111,68,17
+    CONTROL         "直接连接到互联网",IDC_RADIO_NO_NAT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,87,124,80,10
+    CONTROL         "在NAT或者防火墙后(填写网关IP)",IDC_RADIO_USE_NAT,"Button",BS_AUTORADIOBUTTON,87,144,129,10
+    CONTROL         "在NAT或者防火墙后(使用STUN解决)",IDC_RADIO_USE_STUN,"Button",BS_AUTORADIOBUTTON,87,173,140,10
+    LTEXT           "公网 IP 地址:",IDC_STATIC,98,158,57,11
+    LTEXT           "Stun 服务器:",IDC_STATIC,98,188,57,11
+    EDITTEXT        IDC_EDIT_NAT_ADDRESS,161,157,132,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_STUN_SERVER,161,186,132,12,ES_AUTOHSCROLL
+END
+
+IDD_MEETPHONE_MULTIMEDIA DIALOGEX 0, 0, 314, 183
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,3,301,102
+    LTEXT           "音频设置",IDC_STATIC,6,4,55,11
+    CTEXT           "回放设备:",IDC_STATIC,11,20,47,12
+    CTEXT           "响铃设备:",IDC_STATIC,11,37,47,12
+    CTEXT           "录音设备:",IDC_STATIC,11,54,47,12
+    CTEXT           "铃声文件:",IDC_STATIC,11,71,47,12
+    COMBOBOX        IDC_COMBO_PLAYBACK,68,18,225,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_RING,68,35,225,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CAPTURE,68,52,225,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "启用回声抑制",IDC_CHECK_ECHOCANCEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,68,86,68,15
+    EDITTEXT        IDC_EDIT_RING,68,71,104,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "播放",IDC_BUTTON_PLAY,201,70,92,14
+    PUSHBUTTON      "浏览",IDC_BUTTON_BROWSE,173,70,26,14
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,109,301,63
+    LTEXT           "视频设置",IDC_STATIC,6,114,55,11
+    CTEXT           "视频输入:",IDC_STATIC,11,131,47,12
+    CTEXT           "视频分辨率:",IDC_STATIC,11,148,47,12
+    COMBOBOX        IDC_COMBO_WEBCAMS,68,129,225,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_VIDEO_SIZE,68,147,225,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MEETPHONE_CODEC DIALOGEX 0, 0, 314, 209
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_DOWNLOAD_BW,175,139,116,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_DOWNLOAD_BW,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,292,139,11,15
+    EDITTEXT        IDC_EDIT_UPLOAD_BW,175,155,116,15,ES_RIGHT | ES_AUTOHSCROLL | NOT WS_TABSTOP
+    CONTROL         "",IDC_SPIN_UPLOAD_BW,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_GROUP,292,155,11,15
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,120,303,78
+    LTEXT           "编解码器",IDC_STATIC,6,4,68,17
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,4,3,303,113
+    COMBOBOX        IDC_COMBO_CODEC_VIEW,13,17,290,15,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_LIST_CODEC,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,13,31,235,80
+    PUSHBUTTON      "向上",IDC_BUTTON_UP,249,30,54,16
+    PUSHBUTTON      "向下",IDC_BUTTON_DOWN,249,53,54,16
+    PUSHBUTTON      "启用",IDC_BUTTON_ENABLE,249,75,54,16
+    PUSHBUTTON      "禁止",IDC_BUTTON_DISABLE,249,96,54,16
+    LTEXT           "带宽控制",IDC_STATIC,6,122,68,17
+    CTEXT           "下载带宽控制 Kbit/sec",IDC_STATIC,25,139,146,15
+    CTEXT           "上传带宽控制 Kbit/ses",IDC_STATIC,25,155,146,15
+    CTEXT           "可变速率控制",IDC_STATIC,25,171,146,15
+    CONTROL         "开启可变速率控制",IDC_CHECK_ADAPTIVE_RATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,175,173,126,11
+END
+
+IDD_MEETPHONE_RTSP_ADDR DIALOGEX 0, 0, 300, 35
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "请输入RTSP地址"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,193,21,50,14
+    PUSHBUTTON      "取消",IDCANCEL,247,21,50,14
+    EDITTEXT        IDC_EDIT_RTSP,4,3,292,14,ES_AUTOHSCROLL
+END
+
+IDD_MEETPHONE_MEET DIALOGEX 0, 0, 660, 372
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_MEMBER,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,1,1,160,246
+    CONTROL         "",IDC_STATIC_LOCAL,"Static",SS_BLACKFRAME,1,251,160,120
+END
+
+IDD_MEETPHONE_MEMBER DIALOGEX 0, 0, 162, 121
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "静态",IDC_STATIC_MEMBER_NAME,1,2,50,14,0,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_LOADING,"Static",SS_BITMAP,0,54,15,13
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "CompanyName", "兜兜窝"
+            VALUE "FileDescription", "和兜兜视频"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "meetphone.exe"
+            VALUE "LegalCopyright", "兜兜窝。保留所有权利。"
+            VALUE "OriginalFilename", "meetphone.exe"
+            VALUE "ProductName", "视频兜兜"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_MEETPHONE_LOGIN, DIALOG
+    BEGIN
+        RIGHTMARGIN, 157
+    END
+
+    IDD_MEETPHONE_MAIN, DIALOG
+    BEGIN
+        RIGHTMARGIN, 428
+    END
+
+    IDD_MEETPHONE_LOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_MEETPHONE_SETTING, DIALOG
+    BEGIN
+        RIGHTMARGIN, 310
+        BOTTOMMARGIN, 249
+    END
+
+    IDD_MEETPHONE_NETWORK, DIALOG
+    BEGIN
+        RIGHTMARGIN, 312
+        BOTTOMMARGIN, 213
+    END
+
+    IDD_MEETPHONE_MULTIMEDIA, DIALOG
+    BEGIN
+        RIGHTMARGIN, 312
+        BOTTOMMARGIN, 180
+    END
+
+    IDD_MEETPHONE_CODEC, DIALOG
+    BEGIN
+        RIGHTMARGIN, 312
+        BOTTOMMARGIN, 207
+    END
+
+    IDD_MEETPHONE_RTSP_ADDR, DIALOG
+    BEGIN
+        RIGHTMARGIN, 299
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_MAIN MENUEX 
+BEGIN
+    POPUP "选项",                             65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "首选项",                         ID_SETTING,MFT_STRING,MFS_ENABLED
+        MENUITEM "登出",                          ID_LOGOUT,MFT_STRING,MFS_GRAYED
+    END
+    POPUP "帮助",                             65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "调试信息",                        ID_MENU_DEBUG,MFT_STRING,MFS_ENABLED
+        MENUITEM "关于",                          ID_MENU_ABOUT,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_MEETPHONE_NETWORK DLGINIT
+BEGIN
+    IDC_COMBO_PROTOCOL, 0x403, 9, 0
+0x4953, 0x2850, 0x4455, 0x2950, "\000" 
+    IDC_COMBO_PROTOCOL, 0x403, 9, 0
+0x4953, 0x2850, 0x4354, 0x2950, "\000" 
+    IDC_COMBO_PROTOCOL, 0x403, 9, 0
+0x4953, 0x2850, 0x4c54, 0x2953, "\000" 
+    0
+END
+
+IDD_MEETPHONE_CODEC DLGINIT
+BEGIN
+    IDC_COMBO_CODEC_VIEW, 0x403, 13, 0
+0xf4d2, 0xb5c6, 0xe0b1, 0xe2bd, 0xebc2, 0xf7c6, "\000" 
+    IDC_COMBO_CODEC_VIEW, 0x403, 13, 0
+0xd3ca, 0xb5c6, 0xe0b1, 0xe2bd, 0xebc2, 0xf7c6, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_CHECKBOX            BITMAP                  "res\\checkbox.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "关于 meetphone(&A)..."
+    IDS_STATUS              "状态"
+    IDS_TIME                "时间"
+END
+
+#endif    // 中文(中华人民共和国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\meetphone.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"      // 标准组件
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
