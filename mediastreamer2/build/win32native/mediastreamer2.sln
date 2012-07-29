@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mediastreamer2", "mediastreamer2.vcproj", "{4A07BB2B-F56E-4F1B-A729-D28B782AC128}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128} = {4A07BB2B-F56E-4F1B-A719-D28B782AC128}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oRTP", "..\..\..\oRTP\build\win32native\oRTP.vcproj", "{4A07BB2B-F56E-4F1B-A719-D28B782AC128}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "msx264", "..\..\..\msx264\build\vs\msx264.vcproj", "{8A4A1340-5B83-4698-8F2A-B8DCCA0C3285}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128} = {4A07BB2B-F56E-4F1B-A719-D28B782AC128}
+		{4A07BB2B-F56E-4F1B-A729-D28B782AC128} = {4A07BB2B-F56E-4F1B-A729-D28B782AC128}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coreapi", "..\..\..\coreapi\coreapi\coreapi.vcproj", "{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meetphone", "..\..\..\meetphone\meetphone\meetphone.vcproj", "{764AC349-9D49-4CAA-BB72-7AF871B41884}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16} = {A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A07BB2B-F56E-4F1B-A729-D28B782AC128}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4A07BB2B-F56E-4F1B-A729-D28B782AC128}.Debug|Win32.Build.0 = Debug|Win32
+		{4A07BB2B-F56E-4F1B-A729-D28B782AC128}.Release|Win32.ActiveCfg = Release|Win32
+		{4A07BB2B-F56E-4F1B-A729-D28B782AC128}.Release|Win32.Build.0 = Release|Win32
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128}.Debug|Win32.Build.0 = Debug|Win32
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128}.Release|Win32.ActiveCfg = Release|Win32
+		{4A07BB2B-F56E-4F1B-A719-D28B782AC128}.Release|Win32.Build.0 = Release|Win32
+		{8A4A1340-5B83-4698-8F2A-B8DCCA0C3285}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8A4A1340-5B83-4698-8F2A-B8DCCA0C3285}.Debug|Win32.Build.0 = Debug|Win32
+		{8A4A1340-5B83-4698-8F2A-B8DCCA0C3285}.Release|Win32.ActiveCfg = Release|Win32
+		{8A4A1340-5B83-4698-8F2A-B8DCCA0C3285}.Release|Win32.Build.0 = Release|Win32
+		{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}.Debug|Win32.Build.0 = Debug|Win32
+		{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}.Release|Win32.ActiveCfg = Release|Win32
+		{A7B3584B-20D6-4CFD-9B15-BD1DA40B8D16}.Release|Win32.Build.0 = Release|Win32
+		{764AC349-9D49-4CAA-BB72-7AF871B41884}.Debug|Win32.ActiveCfg = Debug|Win32
+		{764AC349-9D49-4CAA-BB72-7AF871B41884}.Debug|Win32.Build.0 = Debug|Win32
+		{764AC349-9D49-4CAA-BB72-7AF871B41884}.Release|Win32.ActiveCfg = Release|Win32
+		{764AC349-9D49-4CAA-BB72-7AF871B41884}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
