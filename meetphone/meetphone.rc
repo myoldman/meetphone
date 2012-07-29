@@ -54,8 +54,8 @@ BEGIN
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
     "LANGUAGE 4, 2\r\n"
     "#pragma code_page(936)\r\n"
-    "#include ""res\\meetphone.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
-    "#include ""l.CHS\\afxres.rc""      // 标准组件\r\n"
+    "#include ""res\\meetphone.rc2""  // ·? Microsoft Visual C++ ±à?-μ?×ê?′\r\n"
+    "#include ""l.CHS\\afxres.rc""      // ±ê×?×é?t\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -113,7 +113,9 @@ BEGIN
     CONTROL         "",IDC_LIST_CONFERENCE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,18,225,187
     LTEXT           "会议列表",IDC_STATIC,6,4,95,12
     CONTROL         "",IDC_LIST_MEMBER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,238,18,205,187
-    LTEXT           "成员列表",IDC_STATIC,217,5,95,12
+    LTEXT           "成员列表",IDC_STATIC,238,5,95,12
+    CONTROL         "",IDC_REFRESH,"Button",BS_OWNERDRAW | WS_TABSTOP,220,3,12,12
+    CONTROL         "",IDC_CREATE,"Button",BS_OWNERDRAW | WS_TABSTOP,202,3,12,12
 END
 
 IDD_MEETPHONE_LOG DIALOGEX 0, 0, 316, 183
@@ -122,7 +124,7 @@ CAPTION "调试日志"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "关闭",IDCANCEL,259,162,50,14
-    CONTROL         "",IDC_LOG,"RichEdit20W",ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER | WS_VSCROLL | WS_TABSTOP,7,7,302,152
+    CONTROL         "",IDC_LOG,"RichEdit20W",WS_BORDER | WS_VSCROLL | WS_TABSTOP | 0x84,7,7,302,152
 END
 
 IDD_MEETPHONE_SETTING DIALOGEX 0, 0, 314, 254
@@ -401,6 +403,14 @@ END
 //
 
 IDB_CHECKBOX            BITMAP                  "res\\checkbox.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDR_REFRESH             PNG                     "res\\refresh.png"
+IDB_CREATE              PNG                     "res\\create.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

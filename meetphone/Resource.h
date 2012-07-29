@@ -19,6 +19,9 @@
 #define IDD_MEETPHONE_RTSP_ADDR         142
 #define IDD_MEETPHONE_MEET              148
 #define IDD_MEETPHONE_MEMBER            149
+#define IDR_REFRESH                     154
+#define IDB_PNG1                        155
+#define IDB_CREATE                      155
 #define IDC_STATIC_MAIN                 1002
 #define IDC_LOGIN_SERVER                1004
 #define IDC_LOGIN_USER                  1005
@@ -70,6 +73,8 @@
 #define IDC_LIST_MEMBER                 1051
 #define IDC_STATIC_LOCAL                1062
 #define IDC_LOADING                     1063
+#define IDC_REFRESH                     1064
+#define IDC_CREATE                      1065
 #define ID_32771                        32771
 #define ID_MENU_DEBUG                   32775
 #define ID_MENU_ABOUT                   32776
@@ -83,9 +88,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        150
+#define _APS_NEXT_RESOURCE_VALUE        156
 #define _APS_NEXT_COMMAND_VALUE         32782
-#define _APS_NEXT_CONTROL_VALUE         1064
+#define _APS_NEXT_CONTROL_VALUE         1065
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif

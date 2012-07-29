@@ -2,7 +2,7 @@
 #include "afxwin.h"
 #include "meetphonemember.h"
 #include "afxcmn.h"
-
+#include "listctrlex.h"
 
 // Cmeetphonemeet ¶Ô»°¿ò
 
@@ -30,12 +30,14 @@ public:
 	afx_msg LRESULT OnMemberAdd(WPARAM wP,LPARAM lP);
 	afx_msg LRESULT OnMemberPreviewHwnd(WPARAM wP,LPARAM lP);
 private:
+	void InitMemberList();
 	HWND AddMeetMember(CString &memberName);
 
 private:
 	CList<Cmeetphonemember*, Cmeetphonemember*&> m_ListMember;
-	CListCtrl m_hListMember;
+	CListCtrlEx m_hListMember;
 	CStatic m_hStaticLocal;
 	Cmeetphonemember *m_hLocalView;
+	CImageList  m_hActionImage;
 	
 };

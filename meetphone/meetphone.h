@@ -64,6 +64,7 @@ private:
 	LinphoneCore *m_pCore;
 	UINT m_nTimerID;
 	UINT m_nLogTimerID;
+	ULONG_PTR m_gdiplusToken;
 public:
 // й╣ож
 

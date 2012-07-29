@@ -156,7 +156,17 @@ extern "C" {
 		delete pFile;
 		return ret;
 	}
-
+	void load_png_to_imagelist(CImageList &imageList, CString &imagePath)
+	{
+		CImage png;
+		CBitmap bmp;
+		HBITMAP hBmp;
+		png.Load(imagePath);
+		hBmp = png.Detach();
+		bmp.Attach(hBmp);
+		imageList.Add(&bmp, RGB(255, 255, 255));
+		bmp.Detach();
+	}
 #ifdef __cplusplus
 } 
 #endif

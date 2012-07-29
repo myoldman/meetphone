@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "afxcmn.h"
 #include "listctrlex.h"
+#include "GdipButton.h"
 
 // CmeetphonemainDlg ¶Ô»°¿ò
 
@@ -38,6 +39,8 @@ private:
 	CImageList  m_hActionImage;
 	CListCtrlEx m_ConfList;
 	CListCtrlEx m_MemberList;
+	CGdipButton m_hButtonCreate;
+	CGdipButton m_hButtonRefresh;
 
 private:
 	BOOL InitConferenceList();

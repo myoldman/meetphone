@@ -42,6 +42,8 @@ void CmeetphonemainDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_CONFERENCE, m_ConfList);
 	DDX_Control(pDX, IDC_LIST_MEMBER, m_MemberList);
+	DDX_Control(pDX, IDC_CREATE, m_hButtonCreate);
+	DDX_Control(pDX, IDC_REFRESH, m_hButtonRefresh);
 }
 
 
@@ -179,26 +181,17 @@ BOOL CmeetphonemainDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	CImage png;
-	CBitmap bmp;
-	HBITMAP hBmp;
 	m_hActionImage.Create(16, 16, ILC_COLOR32,  2, 4);
+	load_png_to_imagelist(m_hActionImage,CString("res/webphone_16.png"));
+	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
 
-	// Load image and add colunm to conference list
-	png.Load(_T("res/webphone_16.png"));
-	hBmp = png.Detach();
-	bmp.Attach(hBmp);
-	m_hActionImage.Add(&bmp, RGB(255, 255, 255));
-	bmp.Detach();
-
-	png.Load(_T("res/delete.png"));
-	hBmp = png.Detach();
-	bmp.Attach(hBmp);
-	m_hActionImage.Add(&bmp, RGB(255, 255, 255));
-	bmp.Detach();
 	InitConferenceList();
 	InitMemberList();
 	ReloadConferenceList();
+
+	m_hButtonCreate.LoadStdImage(IDB_CREATE, _T("PNG"));
+	m_hButtonRefresh.LoadStdImage(IDR_REFRESH, _T("PNG"));
+
 	// Enable logout menu
 	GetMenu()->EnableMenuItem(ID_LOGOUT, MF_ENABLED);
 

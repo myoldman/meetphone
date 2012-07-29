@@ -192,6 +192,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\GdipButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ListCtrlEx.cpp"
 				>
 			</File>
@@ -278,6 +282,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CGdiPlusBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GdipButton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ListCtrlEx.h"
 				>
 			</File>
@@ -326,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MemDC.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PictureEx.h"
 				>
 			</File>
@@ -360,6 +376,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\create.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\linphone.png"
 				>
 			</File>
@@ -377,6 +397,10 @@
 			</File>
 			<File
 				RelativePath=".\res\meetphone.rc2"
+				>
+			</File>
+			<File
+				RelativePath=".\res\refresh.png"
 				>
 			</File>
 			<File

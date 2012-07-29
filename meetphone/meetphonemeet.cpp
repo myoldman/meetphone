@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "meetphone.h"
 #include "meetphonemeet.h"
+#include "support.h"
+#include "private.h"
 
 
 // Cmeetphonemeet 对话框
@@ -65,6 +67,25 @@ void Cmeetphonemeet::OnDestroy()
 	m_pParentWnd->PostMessage(WM_DELETE_MEETDLG,(WPARAM)this);
 }
 
+void Cmeetphonemeet::InitMemberList()
+{
+	LinphoneCore *lc = theApp.GetCore();
+	m_hListMember.AddHandOverColumn(4);
+	m_hListMember.AddHandOverColumn(5);
+	m_hListMember.AddHandOverColumn(6);
+	m_hListMember.SetImageList(&m_hActionImage, LVSIL_SMALL);
+	m_hListMember.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT );
+	m_hListMember.InsertColumn(0, L"名称", LVCFMT_LEFT, 0);
+	m_hListMember.InsertColumn(1, L"名称", LVCFMT_LEFT, 80);
+	m_hListMember.InsertColumn(2, L"IP",LVCFMT_LEFT, 108);
+	m_hListMember.InsertColumn(3, L"状态", LVCFMT_LEFT, 80);
+	m_hListMember.InsertColumn(4, L"", LVCFMT_CENTER, 20);
+	if(lc->is_admin) {
+		m_hListMember.InsertColumn(5, L"", LVCFMT_CENTER, 20);
+		m_hListMember.InsertColumn(6, L"", LVCFMT_CENTER, 20);
+	}
+}
+
 BOOL Cmeetphonemeet::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -79,6 +100,12 @@ BOOL Cmeetphonemeet::OnInitDialog()
 	m_hLocalView->Create(IDD_MEETPHONE_MEMBER,this);
 	m_hLocalView->MoveWindow(&locaViewRect);
 	m_hLocalView->ShowWindow(SW_SHOW);
+
+	m_hActionImage.Create(16, 16, ILC_COLOR32,  2, 4);
+	load_png_to_imagelist(m_hActionImage,CString("res/webphone_16.png"));
+	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
+	load_png_to_imagelist(m_hActionImage, CString("res/sound.png"));
+	InitMemberList();
 
 	return TRUE;
 }

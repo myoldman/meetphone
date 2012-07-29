@@ -148,6 +148,9 @@ BOOL CmeetphoneApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 	AfxInitRichEdit();
+	// Initialize GDI+
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+	Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
  
 	CWinAppEx::InitInstance();
 
@@ -185,6 +188,8 @@ BOOL CmeetphoneApp::InitInstance()
 	
 	m_pSettingWnd->DestroyWindow();
 	delete m_pSettingWnd;
+	
+	Gdiplus::GdiplusShutdown(m_gdiplusToken);
 
 	return FALSE;
 }
