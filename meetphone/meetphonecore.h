@@ -22,6 +22,7 @@ void MeetphoneRegistrationStateChanged(LinphoneCore *lc, LinphoneProxyConfig *cf
 											  LinphoneRegistrationState rs, const char *msg);
 void MeetphoneCallStateChanged(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cs, const char *msg);
 void MeetphoneDisplayStatus(LinphoneCore *lc, const char *status);
+void MeetphoneNotifyRecvConf(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *ev);
 void MeetphoneShowMainDlg();
 void MeetphoneShowMeetDlg(LinphoneCall *call);
 

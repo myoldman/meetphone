@@ -144,12 +144,7 @@ extern "C" {
 			{
 				strHtml += strBuff;
 			}
-
-			Json::Reader reader;
-			Json::Value json_object;
-			if (reader.parse(strHtml, response) && response.isArray()){
-				ret = TRUE;
-			}
+			ret = TRUE;
 		}
 		session.Close();
 		pFile->Close(); 

@@ -50,4 +50,5 @@ private:
 
 public:
 	afx_msg void OnBnClickedCreate();
+	afx_msg void OnBnClickedRefresh();
 };

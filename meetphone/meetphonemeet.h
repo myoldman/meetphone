@@ -27,6 +27,7 @@ public:
 	afx_msg void OnClose();
 	afx_msg LONG OnMemberMaximizeMsg(WPARAM wP,LPARAM lP);
 	afx_msg LONG OnMemberRestoreMsg(WPARAM wP,LPARAM lP);
+	afx_msg LONG OnMemberReloadMsg(WPARAM wP,LPARAM lP);
 	afx_msg LRESULT OnMemberAdd(WPARAM wP,LPARAM lP);
 	afx_msg LRESULT OnMemberPreviewHwnd(WPARAM wP,LPARAM lP);
 private:

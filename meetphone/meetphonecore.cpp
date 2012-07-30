@@ -135,6 +135,12 @@ void MeetphoneRegistrationStateChanged(LinphoneCore *lc, LinphoneProxyConfig *cf
 
 }
 
+void MeetphoneNotifyRecvConf(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *ev)
+{
+	if(theApp.m_pMeetingWnd != NULL)
+		theApp.m_pMeetingWnd->PostMessage(WM_MEMBER_RELOAD);
+}
+
 void MeetphoneCallStateChanged(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cs, const char *msg)
 {
 	unsigned long id = 0;

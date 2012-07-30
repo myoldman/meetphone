@@ -104,7 +104,7 @@ BOOL CmeetphoneApp::InitCoreapi()
 	vtable.call_state_changed=MeetphoneCallStateChanged;
 	vtable.registration_state_changed=MeetphoneRegistrationStateChanged;
 	//vtable.notify_presence_recv=linphone_gtk_notify_recv;
-	//vtable.notify_recv=linphone_gtk_notify_recv_conf;
+	vtable.notify_recv=MeetphoneNotifyRecvConf;
 	//vtable.new_subscription_request=linphone_gtk_new_unknown_subscriber;
 	//vtable.auth_info_requested=linphone_gtk_auth_info_requested;
 	vtable.display_status=MeetphoneDisplayStatus;

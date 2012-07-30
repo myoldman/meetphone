@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(CmeetphonemainDlg, CDialog)
 	ON_MESSAGE(WM_RELOAD_MEMBER, OnReloadMemberMsg)
 	ON_MESSAGE(WM_RELOAD_CONEFENCE,OnReloadConferenceListMsg)
 	ON_BN_CLICKED(IDC_CREATE, &CmeetphonemainDlg::OnBnClickedCreate)
+	ON_BN_CLICKED(IDC_REFRESH, &CmeetphonemainDlg::OnBnClickedRefresh)
 END_MESSAGE_MAP()
 
 BOOL CmeetphonemainDlg::InitMemberList()
@@ -299,7 +300,7 @@ void CmeetphonemainDlg::OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult)
 		{
 			CString restMethod("/mcuWeb/controller/removeParticipant");
 			CString strFormData;
-			strFormData.Format(_T("uid=%s&partId=%d&num=0\r\n"), memberData->confUID, memberData->memberId);
+			strFormData.Format(_T("uid=%s&partId=%d&num=0"), memberData->confUID, memberData->memberId);
 			Json::Value response;
 			http_post_request(restMethod, strFormData, response);
 			PostMessage(WM_RELOAD_MEMBER, (WPARAM)_wcsdup(memberData->confUID.GetString()));
@@ -340,6 +341,14 @@ void CmeetphonemainDlg::OnBnClickedCreate()
 	{
 		CString restMethod("/mcuWeb/controller/linphoneCreateConference");
 		Json::Value response;
-		http_post_request(restMethod, createmeetDlg.m_StrFormData, response);
+		if(!http_post_request(restMethod, createmeetDlg.m_StrFormData, response))
+		{
+			AfxMessageBox(L"创建会议失败");
+		}
 	}
+}
+
+void CmeetphonemainDlg::OnBnClickedRefresh()
+{
+	ReloadConferenceList();
 }

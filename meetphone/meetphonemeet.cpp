@@ -54,6 +54,7 @@ BEGIN_MESSAGE_MAP(Cmeetphonemeet, CDialog)
 	ON_MESSAGE(WM_MEMBER_RESTORE,OnMemberRestoreMsg)
 	ON_MESSAGE(WM_MEMBER_ADD,OnMemberAdd)
 	ON_MESSAGE(WM_MEMBER_PREVIEW_HWND, OnMemberPreviewHwnd)
+	ON_MESSAGE(WM_MEMBER_RELOAD, OnMemberReloadMsg)
 	ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_MEMBER, &Cmeetphonemeet::OnLvnDeleteitemListMember)
 END_MESSAGE_MAP()
 
@@ -119,7 +120,7 @@ BOOL Cmeetphonemeet::ReloadMemberList()
 				m_hListMember.InsertItem(index, _T(""));
 				m_hListMember.SetItemText(real_index, 1, cStrName);
 				m_hListMember.SetItemText(real_index, 2, CString(ip));
-				m_hListMember.SetItem(index, 3, LVIF_IMAGE, NULL, 0,LVIS_SELECTED, LVIS_SELECTED, NULL );
+				m_hListMember.SetItem(real_index, 3, LVIF_IMAGE, NULL, 0,LVIS_SELECTED, LVIS_SELECTED, NULL );
 				if(lc->is_admin)
 				{
 					m_hListMember.SetItem(real_index, 4, LVIF_IMAGE, NULL, 1,LVIS_SELECTED, LVIS_SELECTED, NULL );
@@ -201,6 +202,11 @@ LONG Cmeetphonemeet::OnMemberMaximizeMsg(WPARAM wP, LPARAM lP)
 	return 0;
 }
 
+LONG Cmeetphonemeet::OnMemberReloadMsg(WPARAM wP,LPARAM lP)
+{
+	ReloadMemberList();
+	return 0;
+}
 
 LONG Cmeetphonemeet::OnMemberRestoreMsg(WPARAM wP,LPARAM lP)
 {
