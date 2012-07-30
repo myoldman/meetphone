@@ -45,4 +45,5 @@ public:
 	CString m_sConfUID;
 	
 	afx_msg void OnLvnDeleteitemListMember(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult);
 };

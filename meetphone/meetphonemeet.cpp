@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(Cmeetphonemeet, CDialog)
 	ON_MESSAGE(WM_MEMBER_PREVIEW_HWND, OnMemberPreviewHwnd)
 	ON_MESSAGE(WM_MEMBER_RELOAD, OnMemberReloadMsg)
 	ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_MEMBER, &Cmeetphonemeet::OnLvnDeleteitemListMember)
+	ON_NOTIFY(NM_CLICK, IDC_LIST_MEMBER, &Cmeetphonemeet::OnNMClickListMember)
 END_MESSAGE_MAP()
 
 
@@ -63,13 +64,6 @@ END_MESSAGE_MAP()
 
 void Cmeetphonemeet::OnDestroy()
 {
-	CDialog::OnDestroy();
-	LinphoneCore *lc = theApp.GetCore();
-	LinphoneCall *call = call=linphone_core_get_current_call(lc);
-	if (call!=NULL)
-	{
-		linphone_core_terminate_call(lc,call);
-	}
 	m_pParentWnd->PostMessage(WM_DELETE_MEETDLG,(WPARAM)this);
 }
 
@@ -152,9 +146,11 @@ BOOL Cmeetphonemeet::OnInitDialog()
 	m_hLocalView->ShowWindow(SW_SHOW);
 
 	m_hActionImage.Create(16, 16, ILC_COLOR32,  2, 4);
-	load_png_to_imagelist(m_hActionImage,CString("res/webphone_16.png"));
-	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
+	load_png_to_imagelist(m_hActionImage,CString("res/webcamera_16.png"));
 	load_png_to_imagelist(m_hActionImage, CString("res/sound.png"));
+	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
+	load_png_to_imagelist(m_hActionImage, CString("res/mute.png"));
+
 	InitMemberList();
 	ReloadMemberList();
 	return TRUE;
@@ -163,7 +159,14 @@ BOOL Cmeetphonemeet::OnInitDialog()
 void Cmeetphonemeet::OnClose()
 {
 	CDialog::OnClose();
-	DestroyWindow();
+	CDialog::OnDestroy();
+	LinphoneCore *lc = theApp.GetCore();
+	LinphoneCall *call = call=linphone_core_get_current_call(lc);
+	if (call!=NULL)
+	{
+		linphone_core_terminate_call(lc,call);
+	}
+	//DestroyWindow();
 }
 
 HWND Cmeetphonemeet::AddMeetMember(CString &memberName)
@@ -248,6 +251,37 @@ void Cmeetphonemeet::OnLvnDeleteitemListMember(NMHDR *pNMHDR, LRESULT *pResult)
 		ms_message("Release MemberData %p", memberData);
 		if(memberData != NULL)
 			delete memberData;
+	}
+	*pResult = 0;
+}
+
+void Cmeetphonemeet::OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	if(pNMItemActivate->iItem!=-1 && (pNMItemActivate->iSubItem == 4 || pNMItemActivate->iSubItem == 5) )
+	{
+		LinphoneCore *lc = theApp.GetCore();
+		MemberData *memberData = (MemberData *)m_hListMember.GetItemData(pNMItemActivate->iItem);
+		CString strFormData;
+		Json::Value response;
+		strFormData.Format(_T("uid=%s&partId=%d&num=0"), m_sConfUID, memberData->memberId);
+		if(pNMItemActivate->iSubItem == 4)
+		{	
+			CString restMethod("/mcuWeb/controller/setAudioMute");
+			if( http_post_request(restMethod, strFormData, response) )
+			{
+				m_hListMember.SetItem(pNMItemActivate->iItem, pNMItemActivate->iSubItem, LVIF_IMAGE, NULL, 3,LVIS_SELECTED, LVIS_SELECTED, NULL );
+			}
+		}
+	
+		if(pNMItemActivate->iSubItem == 5)
+		{
+			CString restMethod("/mcuWeb/controller/removeParticipant");
+			if(http_post_request(restMethod, strFormData, response))
+			{
+
+			}	
+		}
 	}
 	*pResult = 0;
 }

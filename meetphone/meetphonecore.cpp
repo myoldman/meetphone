@@ -156,6 +156,8 @@ void MeetphoneCallStateChanged(LinphoneCore *lc, LinphoneCall *call, LinphoneCal
 		case LinphoneCallError:
 			break;
 		case LinphoneCallEnd:
+			if(theApp.m_pMeetingWnd != NULL)
+				theApp.m_pMeetingWnd->DestroyWindow();
 			break;
 		case LinphoneCallIncomingReceived:
 			linphone_core_accept_call(lc,call);
