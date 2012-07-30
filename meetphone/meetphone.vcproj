@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\meetphonecreatemeet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\meetphoneDlg.cpp"
 				>
 			</File>
@@ -303,6 +307,10 @@
 			</File>
 			<File
 				RelativePath=".\meetphonecore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\meetphonecreatemeet.h"
 				>
 			</File>
 			<File

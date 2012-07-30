@@ -9,6 +9,10 @@
 
 
 // Cmeetphonemeet 对话框
+typedef struct _MemberData{
+	int memberId;
+}MemberData;
+
 
 IMPLEMENT_DYNAMIC(Cmeetphonemeet, CDialog)
 
@@ -50,6 +54,7 @@ BEGIN_MESSAGE_MAP(Cmeetphonemeet, CDialog)
 	ON_MESSAGE(WM_MEMBER_RESTORE,OnMemberRestoreMsg)
 	ON_MESSAGE(WM_MEMBER_ADD,OnMemberAdd)
 	ON_MESSAGE(WM_MEMBER_PREVIEW_HWND, OnMemberPreviewHwnd)
+	ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_MEMBER, &Cmeetphonemeet::OnLvnDeleteitemListMember)
 END_MESSAGE_MAP()
 
 
@@ -70,20 +75,64 @@ void Cmeetphonemeet::OnDestroy()
 void Cmeetphonemeet::InitMemberList()
 {
 	LinphoneCore *lc = theApp.GetCore();
+	m_hListMember.AddHandOverColumn(3);
 	m_hListMember.AddHandOverColumn(4);
 	m_hListMember.AddHandOverColumn(5);
-	m_hListMember.AddHandOverColumn(6);
 	m_hListMember.SetImageList(&m_hActionImage, LVSIL_SMALL);
 	m_hListMember.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT );
 	m_hListMember.InsertColumn(0, L"名称", LVCFMT_LEFT, 0);
 	m_hListMember.InsertColumn(1, L"名称", LVCFMT_LEFT, 80);
-	m_hListMember.InsertColumn(2, L"IP",LVCFMT_LEFT, 108);
-	m_hListMember.InsertColumn(3, L"状态", LVCFMT_LEFT, 80);
-	m_hListMember.InsertColumn(4, L"", LVCFMT_CENTER, 20);
+	m_hListMember.InsertColumn(2, L"IP",LVCFMT_LEFT, 96);
+	m_hListMember.InsertColumn(3, L"", LVCFMT_CENTER, 20);
 	if(lc->is_admin) {
+		m_hListMember.InsertColumn(4, L"", LVCFMT_CENTER, 20);
 		m_hListMember.InsertColumn(5, L"", LVCFMT_CENTER, 20);
-		m_hListMember.InsertColumn(6, L"", LVCFMT_CENTER, 20);
 	}
+}
+
+BOOL Cmeetphonemeet::ReloadMemberList()
+{
+	if(!m_sConfUID.IsEmpty())
+	{
+		LinphoneCore *lc = theApp.GetCore();
+		CString restMethod;
+		restMethod.Format(_T("/mcuWeb/controller/getConferenceMember?confid=%s"), m_sConfUID);
+		Json::Value response;
+		if(http_get_request(restMethod, response)) 
+		{
+			m_hListMember.DeleteAllItems();
+			int real_index = 0;
+			for ( unsigned int index = 0; index < response.size(); ++index ) 
+			{
+				const char* strName = response[index]["name"].asCString();
+				const char *ip = response[index]["ip"].asCString();
+				const char *state = response[index]["state"].asCString();
+				int memberId = response[index]["id"].asInt();
+				if(state != NULL && strcasecmp("CONNECTED", state) == 0) 
+				{
+					state = _(state);
+				} else {
+					continue;
+				}
+				CString cStrName;
+				convert_utf8_to_unicode(strName, cStrName);
+				m_hListMember.InsertItem(index, _T(""));
+				m_hListMember.SetItemText(real_index, 1, cStrName);
+				m_hListMember.SetItemText(real_index, 2, CString(ip));
+				m_hListMember.SetItem(index, 3, LVIF_IMAGE, NULL, 0,LVIS_SELECTED, LVIS_SELECTED, NULL );
+				if(lc->is_admin)
+				{
+					m_hListMember.SetItem(real_index, 4, LVIF_IMAGE, NULL, 1,LVIS_SELECTED, LVIS_SELECTED, NULL );
+					m_hListMember.SetItem(real_index, 5, LVIF_IMAGE, NULL, 2,LVIS_SELECTED, LVIS_SELECTED, NULL );
+				}
+				MemberData *memberData = new MemberData;
+				memberData->memberId = memberId;
+				m_hListMember.SetItemData(real_index, (DWORD_PTR)memberData);
+				real_index++;
+			}
+		}
+	}
+	return TRUE;
 }
 
 BOOL Cmeetphonemeet::OnInitDialog()
@@ -106,7 +155,7 @@ BOOL Cmeetphonemeet::OnInitDialog()
 	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
 	load_png_to_imagelist(m_hActionImage, CString("res/sound.png"));
 	InitMemberList();
-
+	ReloadMemberList();
 	return TRUE;
 }
 
@@ -182,4 +231,17 @@ LRESULT Cmeetphonemeet::OnMemberAdd(WPARAM wP,LPARAM lP)
 LRESULT Cmeetphonemeet::OnMemberPreviewHwnd(WPARAM wP,LPARAM lP)
 {
 	return (unsigned long)m_hLocalView->m_hWnd;
+}
+
+void Cmeetphonemeet::OnLvnDeleteitemListMember(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	if (pNMLV->iItem != -1)
+	{
+		MemberData *memberData = (MemberData *)m_hListMember.GetItemData(pNMLV->iItem);
+		ms_message("Release MemberData %p", memberData);
+		if(memberData != NULL)
+			delete memberData;
+	}
+	*pResult = 0;
 }

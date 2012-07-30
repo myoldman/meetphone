@@ -232,6 +232,10 @@ void sal_op_set_user_pointer(SalOp *op, void *up){
 	((SalOpBase*)op)->user_pointer=up;
 }
 
+void sal_op_set_confuid(SalOp *op, const char *confUID){
+	assign_string(&((SalOpBase*)op)->confUID,confUID);
+}
+
 void sal_op_set_username(SalOp *op, const char *username){
 	assign_string(&((SalOpBase*)op)->username,username);
 }
@@ -282,6 +286,10 @@ const char *sal_op_get_username(const SalOp *op){
 
 const char *sal_op_get_userid(const SalOp *op){
 	return ((SalOpBase*)op)->userid;
+}
+
+const char *sal_op_get_confuid(const SalOp *op){
+	return ((SalOpBase*)op)->confUID;
 }
 
 void __sal_op_init(SalOp *b, Sal *sal){

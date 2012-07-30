@@ -48,4 +48,6 @@ private:
 	BOOL ReloadConferenceList();
 	BOOL ReloadMemberList(CString &confUID);
 
+public:
+	afx_msg void OnBnClickedCreate();
 };

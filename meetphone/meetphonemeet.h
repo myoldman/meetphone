@@ -31,6 +31,7 @@ public:
 	afx_msg LRESULT OnMemberPreviewHwnd(WPARAM wP,LPARAM lP);
 private:
 	void InitMemberList();
+	BOOL ReloadMemberList();
 	HWND AddMeetMember(CString &memberName);
 
 private:
@@ -39,5 +40,8 @@ private:
 	CStatic m_hStaticLocal;
 	Cmeetphonemember *m_hLocalView;
 	CImageList  m_hActionImage;
+public:
+	CString m_sConfUID;
 	
+	afx_msg void OnLvnDeleteitemListMember(NMHDR *pNMHDR, LRESULT *pResult);
 };

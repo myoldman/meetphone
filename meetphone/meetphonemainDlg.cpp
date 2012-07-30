@@ -8,6 +8,7 @@
 #include "private.h"
 #include <string>
 #include <json/json.h>
+#include "meetphonecreatemeet.h"
 
 
 typedef struct _ConfData{
@@ -58,6 +59,7 @@ BEGIN_MESSAGE_MAP(CmeetphonemainDlg, CDialog)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_MEMBER, &CmeetphonemainDlg::OnNMClickListMember)
 	ON_MESSAGE(WM_RELOAD_MEMBER, OnReloadMemberMsg)
 	ON_MESSAGE(WM_RELOAD_CONEFENCE,OnReloadConferenceListMsg)
+	ON_BN_CLICKED(IDC_CREATE, &CmeetphonemainDlg::OnBnClickedCreate)
 END_MESSAGE_MAP()
 
 BOOL CmeetphonemainDlg::InitMemberList()
@@ -236,13 +238,23 @@ void CmeetphonemainDlg::OnNMClickListConference(NMHDR *pNMHDR, LRESULT *pResult)
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	if(pNMItemActivate->iItem!=-1 && (pNMItemActivate->iSubItem == 4 || pNMItemActivate->iSubItem == 5) )
 	{
+		LinphoneCore *lc = theApp.GetCore();
+		ConfData *confData = (ConfData *)m_ConfList.GetItemData(pNMItemActivate->iItem);
 		if(pNMItemActivate->iSubItem == 4)
-		{
-			LinphoneCore *lc = theApp.GetCore();
-			ConfData *confData = (ConfData *)m_ConfList.GetItemData(pNMItemActivate->iItem);
+		{	
 			linphone_core_invite(lc,confData->did.c_str());
-
 		}
+	
+		if(pNMItemActivate->iSubItem == 5)
+		{
+			CString restMethod("/mcuWeb/controller/removeConference");
+			CString strFormData;
+			Json::Value response;
+			strFormData.Format(_T("uid=%s"), confData->confUID);
+			http_post_request(restMethod, strFormData, response);
+			PostMessage(WM_RELOAD_CONEFENCE);			
+		}
+
 		CString strtemp;
 		strtemp.Format(L"单击的是第%d行第%d列\n",
 			pNMItemActivate->iItem, pNMItemActivate->iSubItem);
@@ -300,8 +312,15 @@ void CmeetphonemainDlg::OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult)
 LONG CmeetphonemainDlg::OnReloadMemberMsg(WPARAM wP,LPARAM lP)
 {
 	TCHAR *confUID = (TCHAR *)wP;
-	ReloadMemberList(CString(confUID));
-	delete[] confUID;
+	if(confUID != NULL)
+	{
+		ReloadMemberList(CString(confUID));
+		delete[] confUID;
+	}
+	else
+	{
+		m_MemberList.DeleteAllItems();
+	}
 	return 0;
 }
 
@@ -312,3 +331,15 @@ LONG CmeetphonemainDlg::OnReloadConferenceListMsg(WPARAM wP,LPARAM lP)
 	return 0;
 }
 
+
+void CmeetphonemainDlg::OnBnClickedCreate()
+{
+	Cmeetphonecreatemeet createmeetDlg;
+	INT_PTR nResponse = createmeetDlg.DoModal();
+	if( nResponse == IDOK)
+	{
+		CString restMethod("/mcuWeb/controller/linphoneCreateConference");
+		Json::Value response;
+		http_post_request(restMethod, createmeetDlg.m_StrFormData, response);
+	}
+}

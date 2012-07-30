@@ -917,6 +917,20 @@ static void set_remote_ua(SalOp* op, osip_message_t *req){
 		}
 	}
 }
+static void set_confuid(SalOp *op, osip_message_t *req){
+	osip_header_t *h=NULL;
+
+	if (op->replaces){
+		ms_free(op->replaces);
+		op->replaces=NULL;
+	}
+	osip_message_header_get_byname(req,"confUid",0,&h);
+	if (h){
+		if (h->hvalue && h->hvalue[0]!='\0'){
+			sal_op_set_confuid(op, ms_strdup(h->hvalue));
+		}
+	}	
+}
 
 static void set_username(SalOp *op, osip_message_t *req){
 	osip_header_t *h=NULL;
@@ -1011,6 +1025,7 @@ static void inc_new_call(Sal *sal, eXosip_event_t *ev){
 	// added by liuhong for username
 	set_username(op,ev->request);
 	set_userid(op,ev->request);
+	set_confuid(op,ev->request);
 
 	osip_message_get_call_info(ev->request,0,&call_info);
 	if(call_info)
@@ -1175,6 +1190,7 @@ static void call_accepted(Sal *sal, eXosip_event_t *ev){
 	// added by liuhong for username
 	set_username(op,ev->response);
 	set_userid(op,ev->response);
+	set_confuid(op,ev->response);
 
 	sdp=eXosip_get_sdp_info(ev->response);
 	if (sdp){
@@ -1776,6 +1792,7 @@ static bool_t register_again_with_updated_contact(SalOp *op, osip_message_t *ori
 	//added by liuhong for rtsp start
 	set_username(op,last_answer);
 	set_userid(op,last_answer);
+	//set_confuid(op,ev->request);
 	//added by liuhong for rtsp end
 	
 	/*check if contact is up to date*/

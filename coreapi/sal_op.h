@@ -169,6 +169,7 @@ typedef struct SalOpBase{
 	char *remote_ua;
 	char *userid;
 	char *username;
+	char *confUID;
 	SalMediaDescription *local_media;
 	SalMediaDescription *remote_media;
 	void *user_pointer;
@@ -319,10 +320,12 @@ const char *sal_op_get_network_origin(const SalOp *op);
 const char *sal_op_get_remote_ua(const SalOp *op);
 void *sal_op_get_user_pointer(const SalOp *op);
 //added by liuhong for rtsp start
+MS2_PUBLIC const char *sal_op_get_confuid(const SalOp *op);
 MS2_PUBLIC const char *sal_op_get_username(const SalOp *op);
 MS2_PUBLIC const char *sal_op_get_userid(const SalOp *op);
 MS2_PUBLIC void sal_op_set_username(SalOp *op, const char *username);
 MS2_PUBLIC void sal_op_set_userid(SalOp *op, const char *userid);
+MS2_PUBLIC void sal_op_set_confuid(SalOp *op, const char *confUID);
 //added by liuhong for rtsp end
 
 /*Call API*/

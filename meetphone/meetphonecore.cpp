@@ -204,18 +204,26 @@ void MeetphoneShowMeetDlg(LinphoneCall *call)
 {
 	LinphoneCore *lc = theApp.GetCore();
 	Cmeetphonemeet *dlg=new Cmeetphonemeet(theApp.m_pMainWnd);
+	CString memberName;
+	const char *confUID = sal_op_get_confuid(call->op);
+	const char *username = sal_op_get_username(call->op);
+	if(confUID != NULL)
+	{
+		dlg->m_sConfUID = confUID;
+	}
+	if(username != NULL)
+	{
+		convert_utf8_to_unicode(username, memberName);
+	}
+	else 
+	{
+		memberName = _T("未知");
+	}
 	dlg->Create(IDD_MEETPHONE_MEET,theApp.m_pMainWnd);
 	dlg->ModifyStyleEx(WS_EX_TOOLWINDOW, WS_EX_APPWINDOW);
 	dlg->SetWindowText(L"会议");
 	dlg->ShowWindow(SW_SHOWNORMAL);
 	dlg->SetActiveWindow();
-	CString memberName;
-	const char *username = sal_op_get_username(call->op);
-	if(username != NULL){
-		convert_utf8_to_unicode(username, memberName);
-	} else {
-		memberName = _T("未知");
-	}
 	HWND hMemberWnd = (HWND)dlg->SendMessage(WM_MEMBER_ADD, (WPARAM)&memberName);
 	call->videostream->window_id = (unsigned long)hMemberWnd;
 	HWND hPreviewWnd = (HWND)dlg->SendMessage(WM_MEMBER_PREVIEW_HWND, (WPARAM)&memberName);

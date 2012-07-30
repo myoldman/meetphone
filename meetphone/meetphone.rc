@@ -245,6 +245,21 @@ BEGIN
     CONTROL         "",IDC_LOADING,"Static",SS_BITMAP,0,54,15,13
 END
 
+IDD_MEETPHONE_CREATE_MEET DIALOGEX 0, 0, 218, 247
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "创建会议"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,96,229,50,14
+    PUSHBUTTON      "取消",IDCANCEL,160,229,50,14
+    LTEXT           "会议名称",IDC_STATIC,8,13,53,18
+    EDITTEXT        IDC_EDIT_CONF_NAME,76,11,134,12,ES_AUTOHSCROLL
+    LTEXT           "媒体服务器",IDC_STATIC,8,35,57,18
+    COMBOBOX        IDC_COMBO_MIXER,76,31,134,15,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "选择会议成员",IDC_STATIC,8,56,57,18
+    CONTROL         "",IDC_LIST_MEMBER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,8,69,202,154
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -304,11 +319,6 @@ BEGIN
     IDD_MEETPHONE_LOGIN, DIALOG
     BEGIN
         RIGHTMARGIN, 157
-    END
-
-    IDD_MEETPHONE_MAIN, DIALOG
-    BEGIN
-        RIGHTMARGIN, 428
     END
 
     IDD_MEETPHONE_LOG, DIALOG
@@ -442,8 +452,8 @@ END
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE 4, 2
 #pragma code_page(936)
-#include "res\meetphone.rc2"  // 非 Microsoft Visual C++ 编辑的资源
-#include "l.CHS\afxres.rc"      // 标准组件
+#include "res\meetphone.rc2"  // ·? Microsoft Visual C++ ±à?-μ?×ê?′
+#include "l.CHS\afxres.rc"      // ±ê×?×é?t
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
