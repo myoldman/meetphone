@@ -30,4 +30,6 @@ public:
 private:
 	CStatic m_hMemberName;
 	CPictureEx m_hLoading;
+public:
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

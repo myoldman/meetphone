@@ -124,8 +124,8 @@ BOOL CmeetphoneApp::InitCoreapi()
 	m_nLogTimerID = SetTimer(NULL,NULL,30,MeetphoneLog);
 	if (linphone_core_video_enabled(m_pCore)){
 		linphone_core_use_preview_window(m_pCore, TRUE);
-		//linphone_core_enable_video_preview(m_pCore,meetphone_get_ui_config_int("videoselfview",
-	    	//VIDEOSELFVIEW_DEFAULT));
+		linphone_core_enable_video_preview(m_pCore,meetphone_get_ui_config_int("videoselfview",
+	    	VIDEOSELFVIEW_DEFAULT));
 	}
 	return TRUE;
 }

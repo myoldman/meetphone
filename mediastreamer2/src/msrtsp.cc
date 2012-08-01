@@ -159,17 +159,24 @@ MSList *ms_rtsp_connect(const char *rtsp_url, int video_port, int audio_port, ch
 	strcpy(dest_addr, temp_addr);
 
 	RTSPClientLinphone *linphoneRtspClient= new RTSPClientLinphone( *env, rtsp_url, 1, "Linphone", 0);
-
-	linphoneRtspClient->sendOptionsCommand( &continueAfterOPTIONS, NULL );
+	Authenticator authenticator;
+describe:
+	authenticator.setUsernameAndPassword( username, password );
+	linphoneRtspClient->sendOptionsCommand( &continueAfterOPTIONS, &authenticator );
 
 	if( !wait_Live555_response( linphoneRtspClient, scheduler, RTSP_TIME_OUT ) )
     {
         int i_code = linphoneRtspClient->i_live555_ret;
 
-        if( i_code == 0 )
+		if( i_code == 0 ) {
             ms_error( "connection timeout" );
-         else
-            ms_error( "connection error %d", i_code );
+		} else if(i_code == 401) {
+			username = "admin";
+			password = "123456";
+			goto describe;
+		} else {
+			ms_error( "connection error %d", i_code );
+		}
         RTSPClient::close( linphoneRtspClient );
 		return NULL;
     }
@@ -270,9 +277,9 @@ static RtpSession * create_duplex_rtpsession( int locport, bool_t ipv6){
 	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
 	rtp_session_set_scheduling_mode(rtpr,0);
 	rtp_session_set_blocking_mode(rtpr,0);
-	const int socket_buf_size=1000000;
-	rtp_session_set_rtp_socket_recv_buffer_size(rtpr,socket_buf_size);
-	rtp_session_set_rtp_socket_send_buffer_size(rtpr,socket_buf_size);
+	//const int socket_buf_size=1000000;
+	//rtp_session_set_rtp_socket_recv_buffer_size(rtpr,socket_buf_size);
+	//rtp_session_set_rtp_socket_send_buffer_size(rtpr,socket_buf_size);
 	rtp_session_enable_adaptive_jitter_compensation(rtpr,TRUE);
 	rtp_session_set_symmetric_rtp(rtpr,TRUE);
 	rtp_session_set_local_addr(rtpr,ipv6 ? "::" : "0.0.0.0",locport);
@@ -375,17 +382,25 @@ static int msrtsp_describe(MSFilter *f, void *arg){
 	d->dest_addr = ms_strdup(temp_dest_addr);
 	
 	d->rtspClient = new RTSPClientLinphone( *d->env, d->rtsp_url, 1, "Linphone", 0);
-
-	d->rtspClient->sendOptionsCommand( &continueAfterOPTIONS, NULL );
+	Authenticator authenticator;
+describe:
+	authenticator.setUsernameAndPassword( username, password );
+	d->rtspClient->sendOptionsCommand( &continueAfterOPTIONS, &authenticator );
 
 	if( !wait_Live555_response(d->rtspClient, d->scheduler, RTSP_TIME_OUT ) )
     {
         int i_code = d->rtspClient->i_live555_ret;
 
-        if( i_code == 0 )
+        if( i_code == 0 ) {
             ms_error( "connection timeout" );
-         else
-            ms_error( "connection error %d", i_code );
+		} else if(i_code == 401) {
+			username = "admin";
+			password = "123456";
+			goto describe;
+		} else {
+			ms_error( "connection error %d", i_code );
+		}
+
         RTSPClient::close( d->rtspClient );
 		d->rtspClient = NULL;
 		return -1;

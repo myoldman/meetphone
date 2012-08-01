@@ -22,6 +22,8 @@
 #define IDR_REFRESH                     154
 #define IDB_CREATE                      155
 #define IDD_MEETPHONE_CREATE_MEET       156
+#define IDB_BITMAP1                     158
+#define IDB_VOLUME                      158
 #define IDC_STATIC_MAIN                 1002
 #define IDC_LOGIN_SERVER                1004
 #define IDC_LOGIN_USER                  1005
@@ -91,7 +93,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        157
+#define _APS_NEXT_RESOURCE_VALUE        159
 #define _APS_NEXT_COMMAND_VALUE         32782
 #define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           105

@@ -412,6 +412,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\volume.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\webphone_16.png"
 				>
 			</File>

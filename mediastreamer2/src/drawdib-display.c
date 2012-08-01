@@ -138,6 +138,13 @@ typedef struct _DDDisplay{
 	bool_t mirroring;
 	bool_t own_window;
 	char window_title[64];
+	uint8_t *volume_png;
+	int volume_png_size;
+	int volume_png_width;
+	int volume_png_height;
+	short volume_png_bitcount;
+	float frac;
+	float last_frac;
 }DDDisplay;
 
 static LRESULT CALLBACK window_proc(
@@ -240,6 +247,12 @@ static void dd_display_init(MSFilter  *f){
 	obj->mirroring=FALSE;
 	obj->own_window=TRUE;
 	obj->window_title[0] = '\0';
+	obj->volume_png = NULL;
+	obj->volume_png_size = 0;
+	obj->volume_png_width = 0;
+	obj->volume_png_height = 0;
+	obj->frac = 0.0f;
+	obj->last_frac = 0.0f;
 	f->data=obj;
 }
 
@@ -272,6 +285,8 @@ static void dd_display_uninit(MSFilter *f){
 	dd_display_unprepare(f);
 	yuv2rgb_uninit(&obj->mainview);
 	yuv2rgb_uninit(&obj->locview);
+	if(obj->volume_png != NULL)
+		ms_free(obj->volume_png);
 	ms_free(obj);
 }
 
@@ -445,6 +460,7 @@ static void dd_display_process(MSFilter *f){
 		}
 		if(hdc2 != NULL && obj->window_title != '\0')
 		{
+			BITMAPINFOHEADER bi;
 			RECT rc;
 			HFONT   hf; 
 			LOGFONT  lf;
@@ -471,6 +487,20 @@ static void dd_display_process(MSFilter *f){
 			SetBkMode(hdc2,TRANSPARENT); 
 			SetTextColor(hdc2,RGB(255,255,255));
 			DrawText(hdc2,obj->window_title,-1,&rc,DT_LEFT);       //Ìí¼Ó×Ö·ûÉÏÈ¥
+
+			if(obj->volume_png != NULL) {			
+				memset(&bi,0,sizeof(bi));
+				bi.biSize=sizeof(bi);
+				bi.biWidth=obj->volume_png_width;
+				bi.biHeight=obj->volume_png_height;
+				bi.biPlanes=1;
+				bi.biBitCount=obj->volume_png_bitcount;
+				bi.biCompression=BI_RGB;
+				bi.biSizeImage=obj->volume_png_size;
+
+				DrawDibDraw(obj->ddh,hdc2,2,21,-1,-1,&bi,obj->volume_png,
+					0,0,obj->volume_png_width,(int)((mainrect.h - 20)*obj->frac),0);
+			}
 		}
 
 		if (hdc!=hdc2){

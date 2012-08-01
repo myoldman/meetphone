@@ -68,7 +68,7 @@ BOOL CmeetphonemainDlg::InitMemberList()
 	LinphoneCore *lc = theApp.GetCore();
 	m_MemberList.AddHandOverColumn(4);
 	m_MemberList.SetImageList(&m_hActionImage, LVSIL_SMALL);
-	m_MemberList.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT );
+	m_MemberList.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT);
 	m_MemberList.InsertColumn(0, L"名称", LVCFMT_LEFT, 0);
 	m_MemberList.InsertColumn(1, L"名称", LVCFMT_LEFT, 80);
 	m_MemberList.InsertColumn(2, L"IP",LVCFMT_LEFT, 108);
@@ -195,7 +195,6 @@ BOOL CmeetphonemainDlg::OnInitDialog()
 	m_hButtonCreate.LoadStdImage(IDB_CREATE, _T("PNG"));
 	m_hButtonRefresh.LoadStdImage(IDR_REFRESH, _T("PNG"));
 
-	// Enable logout menu
 	GetMenu()->EnableMenuItem(ID_LOGOUT, MF_ENABLED);
 
 	return TRUE;
@@ -255,11 +254,6 @@ void CmeetphonemainDlg::OnNMClickListConference(NMHDR *pNMHDR, LRESULT *pResult)
 			http_post_request(restMethod, strFormData, response);
 			PostMessage(WM_RELOAD_CONEFENCE);			
 		}
-
-		CString strtemp;
-		strtemp.Format(L"单击的是第%d行第%d列\n",
-			pNMItemActivate->iItem, pNMItemActivate->iSubItem);
-		OutputDebugString(strtemp);
 	}
 	*pResult = 0;
 }

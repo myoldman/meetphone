@@ -11,6 +11,7 @@
 // Cmeetphonemeet 对话框
 typedef struct _MemberData{
 	int memberId;
+	bool muted;
 }MemberData;
 
 
@@ -74,7 +75,7 @@ void Cmeetphonemeet::InitMemberList()
 	m_hListMember.AddHandOverColumn(4);
 	m_hListMember.AddHandOverColumn(5);
 	m_hListMember.SetImageList(&m_hActionImage, LVSIL_SMALL);
-	m_hListMember.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT );
+	m_hListMember.SetExtendedStyle(LVS_EX_SUBITEMIMAGES | LVS_EX_FULLROWSELECT);
 	m_hListMember.InsertColumn(0, L"名称", LVCFMT_LEFT, 0);
 	m_hListMember.InsertColumn(1, L"名称", LVCFMT_LEFT, 80);
 	m_hListMember.InsertColumn(2, L"IP",LVCFMT_LEFT, 96);
@@ -103,6 +104,7 @@ BOOL Cmeetphonemeet::ReloadMemberList()
 				const char *ip = response[index]["ip"].asCString();
 				const char *state = response[index]["state"].asCString();
 				int memberId = response[index]["id"].asInt();
+				bool muted = response[index]["ismute"].asBool();
 				if(state != NULL && strcasecmp("CONNECTED", state) == 0) 
 				{
 					state = _(state);
@@ -117,11 +119,13 @@ BOOL Cmeetphonemeet::ReloadMemberList()
 				m_hListMember.SetItem(real_index, 3, LVIF_IMAGE, NULL, 0,LVIS_SELECTED, LVIS_SELECTED, NULL );
 				if(lc->is_admin)
 				{
-					m_hListMember.SetItem(real_index, 4, LVIF_IMAGE, NULL, 1,LVIS_SELECTED, LVIS_SELECTED, NULL );
+					int image_pos = muted ? 3 : 1;
+					m_hListMember.SetItem(real_index, 4, LVIF_IMAGE, NULL, image_pos,LVIS_SELECTED, LVIS_SELECTED, NULL );
 					m_hListMember.SetItem(real_index, 5, LVIF_IMAGE, NULL, 2,LVIS_SELECTED, LVIS_SELECTED, NULL );
 				}
 				MemberData *memberData = new MemberData;
 				memberData->memberId = memberId;
+				memberData->muted = muted;
 				m_hListMember.SetItemData(real_index, (DWORD_PTR)memberData);
 				real_index++;
 			}
@@ -158,6 +162,7 @@ BOOL Cmeetphonemeet::OnInitDialog()
 
 void Cmeetphonemeet::OnClose()
 {
+	ShowWindow(SW_HIDE);
 	CDialog::OnClose();
 	CDialog::OnDestroy();
 	LinphoneCore *lc = theApp.GetCore();
@@ -258,19 +263,31 @@ void Cmeetphonemeet::OnLvnDeleteitemListMember(NMHDR *pNMHDR, LRESULT *pResult)
 void Cmeetphonemeet::OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	if(pNMItemActivate->iItem!=-1 && (pNMItemActivate->iSubItem == 4 || pNMItemActivate->iSubItem == 5) )
+	if(pNMItemActivate->iItem!=-1 && (pNMItemActivate->iSubItem == 3 || pNMItemActivate->iSubItem == 4 || pNMItemActivate->iSubItem == 5) )
 	{
 		LinphoneCore *lc = theApp.GetCore();
 		MemberData *memberData = (MemberData *)m_hListMember.GetItemData(pNMItemActivate->iItem);
 		CString strFormData;
 		Json::Value response;
 		strFormData.Format(_T("uid=%s&partId=%d&num=0"), m_sConfUID, memberData->memberId);
+
+		if(pNMItemActivate->iSubItem == 3)
+		{	
+			strFormData.Format(_T("uid=%s&id=%d&num=0"), m_sConfUID, memberData->memberId);
+			CString restMethod("/mcuWeb/controller/setMosaicSlot");
+			if( http_post_request(restMethod, strFormData, response) )
+			{
+			}
+		}
+
 		if(pNMItemActivate->iSubItem == 4)
 		{	
 			CString restMethod("/mcuWeb/controller/setAudioMute");
 			if( http_post_request(restMethod, strFormData, response) )
 			{
-				m_hListMember.SetItem(pNMItemActivate->iItem, pNMItemActivate->iSubItem, LVIF_IMAGE, NULL, 3,LVIS_SELECTED, LVIS_SELECTED, NULL );
+				memberData->muted = !memberData->muted;
+				int image_pos = memberData->muted ? 3 : 1;
+				m_hListMember.SetItem(pNMItemActivate->iItem, pNMItemActivate->iSubItem, LVIF_IMAGE, NULL, image_pos, LVIS_SELECTED, LVIS_SELECTED, NULL );
 			}
 		}
 	
@@ -279,7 +296,6 @@ void Cmeetphonemeet::OnNMClickListMember(NMHDR *pNMHDR, LRESULT *pResult)
 			CString restMethod("/mcuWeb/controller/removeParticipant");
 			if(http_post_request(restMethod, strFormData, response))
 			{
-
 			}	
 		}
 	}
