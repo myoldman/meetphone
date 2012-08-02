@@ -620,11 +620,24 @@ rtp_session_set_ssrc (RtpSession * session, uint32_t ssrc)
 	session->snd.ssrc = ssrc;
 }
 
-
+/**
+ *	Get the SSRC for the outgoing stream.
+ *
+ * @param session a rtp session.
+**/
 uint32_t
 rtp_session_get_send_ssrc (RtpSession* session)
 {
 	return session->snd.ssrc;
+}
+
+/**
+ * Get the SSRC for the incoming stream.
+ * 
+ * If no packets have been received yet, 0 is returned.
+**/
+uint32_t rtp_session_get_recv_ssrc(RtpSession *session){
+	return session->rcv.ssrc;
 }
 
 
@@ -1616,8 +1629,8 @@ static float compute_bw(struct timeval *orig, unsigned int bytes){
 	if (bytes==0) return 0;
 	gettimeofday(&current,NULL);
 	time=(float)(current.tv_sec - orig->tv_sec) +
-		(float)((float)(current.tv_usec - orig->tv_usec)*1e-6);
-	bw=(float)(((float)bytes)*8/(time+0.001)); 
+		((float)(current.tv_usec - orig->tv_usec)*1e-6);
+	bw=((float)bytes)*8/(time+0.001); 
 	/*+0.0001 avoids a division by zero without changing the results significatively*/
 	return bw;
 }

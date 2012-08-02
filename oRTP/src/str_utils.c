@@ -35,6 +35,17 @@ void mblk_init(mblk_t *mp)
 	mp->b_rptr=mp->b_wptr=NULL;
 	mp->reserved1=0;
 	mp->reserved2=0;
+#if defined(ORTP_TIMESTAMP)
+	memset(&(mp->timestamp), 0, sizeof(struct timeval));
+#endif
+}
+
+void mblk_meta_copy(const mblk_t *source, mblk_t *dest) {
+	dest->reserved1 = source->reserved1;
+	dest->reserved2 = source->reserved2;
+#if defined(ORTP_TIMESTAMP)
+	dest->timestamp = source->timestamp;
+#endif
 }
 
 dblk_t *datab_alloc(int size){
@@ -129,8 +140,7 @@ mblk_t *dupb(mblk_t *mp)
 	datab_ref(mp->b_datap);
 	newm=(mblk_t *) ortp_malloc(sizeof(mblk_t));
 	mblk_init(newm);
-	newm->reserved1=mp->reserved1;
-	newm->reserved2=mp->reserved2;
+	mblk_meta_copy(mp, newm);
 	newm->b_datap=mp->b_datap;
 	newm->b_rptr=mp->b_rptr;
 	newm->b_wptr=mp->b_wptr;
@@ -263,6 +273,7 @@ mblk_t *copyb(mblk_t *mp)
 	newm=allocb(len,BPRI_MED);
 	memcpy(newm->b_wptr,mp->b_rptr,len);
 	newm->b_wptr+=len;
+	newm->ipi_addr=mp->ipi_addr;
 	return newm;
 }
 

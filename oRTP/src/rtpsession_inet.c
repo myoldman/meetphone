@@ -17,16 +17,16 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "ortp/ortp.h"
-#include "utils.h"
-#include "ortp/rtpsession.h"
-#include "rtpsession_priv.h"
 
 #if defined(WIN32) || defined(_WIN32_WCE)
 #include "ortp-config-win32.h"
 #elif HAVE_CONFIG_H
 #include "ortp-config.h" /*needed for HAVE_SYS_UIO_H */
 #endif
+#include "ortp/ortp.h"
+#include "utils.h"
+#include "ortp/rtpsession.h"
+#include "rtpsession_priv.h"
 
 #if (_WIN32_WINNT >= 0x0600)
 #include <delayimp.h>
@@ -86,6 +86,14 @@ static ortp_socket_t create_and_bind(const char *addr, int port, int *sock_famil
 				ortp_warning ("Fail to set rtp address reusable: %s.", getSocketError());
 			}
 		}
+#if defined(ORTP_TIMESTAMP)
+		err = setsockopt (sock, SOL_SOCKET, SO_TIMESTAMP,
+			(SOCKET_OPTION_VALUE)&optval, sizeof (optval));
+		if (err < 0)
+		{
+			ortp_warning ("Fail to set rtp timestamp: %s.",getSocketError());
+		}
+#endif
 
 		*sock_family=res->ai_family;
 		err = bind (sock, res->ai_addr, res->ai_addrlen);
@@ -156,6 +164,14 @@ static ortp_socket_t create_and_bind(const char *addr, int port, int *sock_famil
 			ortp_warning ("Fail to set rtp address reusable: %s.",getSocketError());
 		}
 	}
+#if defined(ORTP_TIMESTAMP)
+	err = setsockopt (sock, SOL_SOCKET, SO_TIMESTAMP,
+			(SOCKET_OPTION_VALUE)&optval, sizeof (optval));
+	if (err < 0)
+	{
+		ortp_warning ("Fail to set rtp timestamp: %s.",getSocketError());
+	}
+#endif
 
 	err = bind (sock,
 		    (struct sockaddr *) &saddr,
@@ -176,8 +192,6 @@ static ortp_socket_t create_and_bind(const char *addr, int port, int *sock_famil
 
 static void set_socket_sizes(int sock, unsigned int sndbufsz, unsigned int rcvbufsz){
 	int err;
-	int bufsize;
-	int size;
 	bool_t done=FALSE;
 	if (sndbufsz>0){
 #ifdef SO_SNDBUFFORCE
@@ -191,13 +205,7 @@ static void set_socket_sizes(int sock, unsigned int sndbufsz, unsigned int rcvbu
 			if (err == -1) {
 				ortp_error("Fail to increase socket's send buffer size with SO_SNDBUF: %s.", getSocketError());
 			}
-			
-			
-			size = sizeof(bufsize);
-			getsockopt(sock, SOL_SOCKET, SO_SNDBUF, (void*)&bufsize, &size);
-			ortp_error("size is %d %d", bufsize, sndbufsz);
 		}
-
 	}
 	done=FALSE;
 	if (rcvbufsz>0){
@@ -297,6 +305,46 @@ rtp_session_set_local_addr (RtpSession * session, const char * addr, int port)
 	}
 	ortp_error("Could not bind RTP socket on port to %s port %i",addr,port);
 	return -1;
+}
+
+
+/**
+ *rtp_session_set_pktinfo:
+ *@session: a rtp session
+ *@activate: activation flag (0 to deactivate, other value to activate)
+ *
+ * (De)activates packet info for incoming and outgoing packets.
+ *
+ * Returns: 0 on success.
+ *
+**/
+int rtp_session_set_pktinfo(RtpSession *session, int activate)
+{
+	int retval;
+
+	// Dont't do anything if socket hasn't been created yet
+	if (session->rtp.socket == (ortp_socket_t)-1) return 0;
+
+	switch (session->rtp.sockfamily) {
+		case AF_INET:
+			retval = setsockopt(session->rtp.socket, IPPROTO_IP, IP_PKTINFO, &activate, sizeof(activate));
+			if (retval < 0) break;
+			retval = setsockopt(session->rtcp.socket, IPPROTO_IP, IP_PKTINFO, &activate, sizeof(activate));
+			break;
+#ifdef ORTP_INET6
+		case AF_INET6:
+			retval = setsockopt(session->rtp.socket, IPPROTO_IPV6, IPV6_PKTINFO, &activate, sizeof(activate));
+			if (retval < 0) break;
+			retval = setsockopt(session->rtcp.socket, IPPROTO_IPV6, IPV6_PKTINFO, &activate, sizeof(activate));
+			break;
+#endif
+		default:
+			retval = -1;
+			break;
+	}
+
+	if (retval < 0) ortp_warning("Failed to set packet info on socket.");
+	return retval;
 }
 
 
@@ -875,8 +923,6 @@ int
 rtp_session_rtp_send (RtpSession * session, mblk_t * m)
 {
 	int error;
-	int bufsize;
-	int size;
 	int i;
 	rtp_header_t *hdr;
 	struct sockaddr *destaddr=(struct sockaddr*)&session->rtp.rem_addr;
@@ -895,9 +941,7 @@ rtp_session_rtp_send (RtpSession * session, mblk_t * m)
 		destaddr=NULL;
 		destlen=0;
 	}
-	
-	size = sizeof(bufsize);
-	getsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (void*)&bufsize, &size);
+
 	if (rtp_session_using_transport(session, rtp)){
 		error = (session->rtp.tr->t_sendto) (session->rtp.tr,m,0,destaddr,destlen);
 	}else{
@@ -910,11 +954,10 @@ rtp_session_rtp_send (RtpSession * session, mblk_t * m)
 			 0,destaddr,destlen);
 #endif
 	}
-
 	if (error < 0){
 		if (session->on_network_error.count>0){
 			rtp_signal_table_emit3(&session->on_network_error,(long)"Error sending RTP packet",INT_TO_POINTER(getSocketErrorCode()));
-		}else ortp_warning ("Error sending rtp packet: %s ; socket=%i %lu %d %d %d %d", getSocketError(), sockfd, ntohl(hdr->ssrc), ntohs(hdr->seq_number), (int) (m->b_wptr - m->b_rptr), session->rtp.loc_port, bufsize);
+		}else ortp_warning ("Error sending rtp packet: %s ; socket=%i", getSocketError(), sockfd);
 		session->rtp.send_errno=getSocketErrorCode();
 	}else{
 		update_sent_bytes(session,error);
@@ -967,8 +1010,58 @@ rtp_session_rtcp_send (RtpSession * session, mblk_t * m)
 	return error;
 }
 
-int
-rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
+int rtp_session_rtp_recv_abstract(ortp_socket_t socket, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen) {
+	int bufsz = (int) (msg->b_datap->db_lim - msg->b_datap->db_base);
+#ifndef _WIN32
+	struct iovec   iov;
+	struct msghdr  msghdr;
+	struct cmsghdr *cmsghdr;
+	struct {
+			struct cmsghdr cm;
+			char control[512];
+		} control;
+	memset(&msghdr, 0, sizeof(msghdr));
+	memset(&iov, 0, sizeof(iov));
+	iov.iov_base = msg->b_wptr;
+	iov.iov_len  = bufsz;
+	if(from != NULL && fromlen != NULL) {
+		msghdr.msg_name = from;
+		msghdr.msg_namelen = *fromlen;
+	}
+	msghdr.msg_iov     = &iov;
+	msghdr.msg_iovlen  = 1;
+	msghdr.msg_control = &control;
+	msghdr.msg_controllen = sizeof(control);
+
+	int ret = recvmsg(socket, &msghdr, flags);
+	if(fromlen != NULL)
+		*fromlen = msghdr.msg_namelen;
+#if defined(ORTP_TIMESTAMP)
+	if(ret >= 0) {
+		for (cmsghdr = CMSG_FIRSTHDR(&msghdr); cmsghdr != NULL ; cmsghdr = CMSG_NXTHDR(&msghdr, cmsghdr)) {
+			if (cmsghdr->cmsg_level == SOL_SOCKET && cmsghdr->cmsg_type == SO_TIMESTAMP) {
+				memcpy(&msg->timestamp, (struct timeval *)CMSG_DATA(cmsghdr), sizeof(struct timeval));
+			}
+		}
+	}
+#endif
+	if(ret >= 0) {
+		for (cmsghdr = CMSG_FIRSTHDR(&msghdr); cmsghdr != NULL ; cmsghdr = CMSG_NXTHDR(&msghdr, cmsghdr)) {
+			if (((cmsghdr->cmsg_level == IPPROTO_IP) || (cmsghdr->cmsg_level == IPPROTO_IPV6)) && (cmsghdr->cmsg_type == IP_PKTINFO)) {
+				struct in_pktinfo *pi = (struct in_pktinfo *)CMSG_DATA(cmsghdr);
+				memcpy(&msg->ipi_addr, &pi->ipi_addr, sizeof(msg->ipi_addr));
+			}
+		}
+	}
+	return ret;
+#else
+	return recvfrom(socket, (char *)msg->b_wptr, bufsz, flags, from, fromlen);
+#endif
+
+
+}
+
+int rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
 {
 	int error;
 	ortp_socket_t sockfd=session->rtp.socket;
@@ -984,23 +1077,21 @@ rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
 
 	while (1)
 	{
-		int bufsz;
 		bool_t sock_connected=!!(session->flags & RTP_SOCKET_CONNECTED);
 
 		if (session->rtp.cached_mp==NULL)
 			 session->rtp.cached_mp = msgb_allocator_alloc(&session->allocator,session->recv_buf_size);
 		mp=session->rtp.cached_mp;
-		bufsz=(int) (mp->b_datap->db_lim - mp->b_datap->db_base);
 		if (sock_connected){
-			error=recv(sockfd,(char*)mp->b_wptr,bufsz,0);
-		}else if (rtp_session_using_transport(session, rtp)) 
+			error=rtp_session_rtp_recv_abstract(sockfd, mp, 0, NULL, NULL);
+		}else if (rtp_session_using_transport(session, rtp)) {
 			error = (session->rtp.tr->t_recvfrom)(session->rtp.tr, mp, 0,
 				  (struct sockaddr *) &remaddr,
 				  &addrlen);
-		else error = recvfrom(sockfd, (char*)mp->b_wptr,
-				  bufsz, 0,
+		} else { error = rtp_session_rtp_recv_abstract(sockfd, mp, 0,
 				  (struct sockaddr *) &remaddr,
 				  &addrlen);
+		}
 		if (error > 0){
 			if (session->symmetric_rtp && !sock_connected){
 				if (session->use_connect){
@@ -1016,8 +1107,8 @@ rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
 				mp=rtp_session_network_simulate(session,mp);
 			/* then parse the message and put on jitter buffer queue */
 			if (mp){
-				rtp_session_rtp_parse(session, mp, user_ts, (struct sockaddr*)&remaddr,addrlen);
 				update_recv_bytes(session,mp->b_wptr-mp->b_rptr);
+				rtp_session_rtp_parse(session, mp, user_ts, (struct sockaddr*)&remaddr,addrlen);	
 			}
 			session->rtp.cached_mp=NULL;
 			/*for bandwidth measurements:*/
@@ -1030,6 +1121,13 @@ rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
 				if (session->on_network_error.count>0){
 					rtp_signal_table_emit3(&session->on_network_error,(long)"Error receiving RTP packet",INT_TO_POINTER(getSocketErrorCode()));
 				}else ortp_warning("Error receiving RTP packet: %s, err num  [%i],error [%i]",getSocketError(),errnum,error);
+#ifdef __ios
+				/*hack for iOS and non-working socket because of background mode*/
+				if (errnum==ENOTCONN){
+					/*re-create new sockets */
+					rtp_session_set_local_addr(session,session->rtp.sockfamily==AF_INET ? "0.0.0.0" : "::0",session->rtp.loc_port);
+				}
+#endif
 			}else{
 				/*EWOULDBLOCK errors or transports returning 0 are ignored.*/
 				if (session->net_sim_ctx){
@@ -1037,8 +1135,8 @@ rtp_session_rtp_recv (RtpSession * session, uint32_t user_ts)
 					mp=rtp_session_network_simulate(session,NULL);
 					if (mp){
 						/* then parse the message and put on jitter buffer queue */
-						rtp_session_rtp_parse(session, mp, user_ts, (struct sockaddr*)&session->rtp.rem_addr,session->rtp.rem_addrlen);
 						update_recv_bytes(session,msgdsize(mp));
+						rtp_session_rtp_parse(session, mp, user_ts, (struct sockaddr*)&session->rtp.rem_addr,session->rtp.rem_addrlen);						
 					}
 				}
 			}
@@ -1073,7 +1171,7 @@ static void compute_rtt(RtpSession *session, const struct timeval *now, const re
 			double sim_delay=(double)session->net_sim_ctx->qsize/(double)session->net_sim_ctx->params.max_bandwidth;
 			rtt_frac+=sim_delay;
 		}
-		session->rtt=(float)rtt_frac;
+		session->rtt=rtt_frac;
 		/*ortp_message("rtt estimated to %f ms",session->rtt);*/
 	}
 }
@@ -1082,19 +1180,42 @@ static void compute_rtt(RtpSession *session, const struct timeval *now, const re
  * @brief : for SR packets, retrieves their timestamp, gets the date, and stores these information into the session descriptor. The date values may be used for setting some fields of the report block of the next RTCP packet to be sent.
  * @param session : the current session descriptor.
  * @param block : the block descriptor that may contain a SR RTCP message.
+ * @return -1 if we detect that the packet is in fact a STUN packet, otherwise 0.
  * @note a basic parsing is done on the block structure. However, if it fails, no error is returned, and the session descriptor is left as is, so it does not induce any change in the caller procedure behaviour.
  */
-static void process_rtcp_packet( RtpSession *session, mblk_t *block ) {
+static int process_rtcp_packet( RtpSession *session, mblk_t *block, struct sockaddr *addr, socklen_t addrlen ) {
 	rtcp_common_header_t *rtcp;
 	RtpStream * rtpstream = &session->rtp;
 
 	int msgsize = (int) ( block->b_wptr - block->b_rptr );
 	if ( msgsize < RTCP_COMMON_HEADER_SIZE ) {
 		ortp_debug( "Receiving a too short RTCP packet" );
-		return;
+		return 0;
 	}
 
 	rtcp = (rtcp_common_header_t *)block->b_rptr;
+
+	if (rtcp->version != 2)
+	{
+		/* try to see if it is a STUN packet */
+		uint16_t stunlen = *((uint16_t *)(block->b_rptr + sizeof(uint16_t)));
+		stunlen = ntohs(stunlen);
+		if (stunlen + 20 == block->b_wptr - block->b_rptr) {
+			/* this looks like a stun packet */
+			if (session->eventqs != NULL) {
+				OrtpEvent *ev = ortp_event_new(ORTP_EVENT_STUN_PACKET_RECEIVED);
+				OrtpEventData *ed = ortp_event_get_data(ev);
+				ed->packet = block;
+				ed->ep = rtp_endpoint_new(addr, addrlen);
+				ed->info.socket_type = OrtpRTCPSocket;
+				rtp_session_dispatch_event(session, ev);
+				return -1;
+			}
+		}
+		/* discard in two case: the packet is not stun OR nobody is interested by STUN (no eventqs) */
+		ortp_debug("Receiving rtcp packet with version number !=2...discarded");
+		return 0;
+	}
 	/* compound rtcp packet can be composed by more than one rtcp message */
 	do{
 		struct timeval reception_date;
@@ -1114,12 +1235,12 @@ static void process_rtcp_packet( RtpSession *session, mblk_t *block ) {
 			
 			if ( ntohl( sr->ssrc ) != session->rcv.ssrc ) {
 				ortp_debug( "Receiving a RTCP SR packet from an unknown ssrc" );
-				return;
+				return 0;
 			}
 
 			if ( msgsize < RTCP_COMMON_HEADER_SIZE + RTCP_SSRC_FIELD_SIZE + RTCP_SENDER_INFO_SIZE + ( RTCP_REPORT_BLOCK_SIZE * sr->ch.rc ) ) {
 				ortp_debug( "Receiving a too short RTCP SR packet" );
-				return;
+				return 0;
 			}
 
 			/* Saving the data to fill LSR and DLSR field in next RTCP report to be transmitted */
@@ -1136,6 +1257,7 @@ static void process_rtcp_packet( RtpSession *session, mblk_t *block ) {
 		}
 	}while (rtcp_next_packet(block));
 	rtcp_rewind(block);
+	return 0;
 }
 
 
@@ -1162,7 +1284,7 @@ rtp_session_rtcp_recv (RtpSession * session)
 		
 		mp=session->rtcp.cached_mp;
 		if (sock_connected){
-			error=recv(session->rtcp.socket,(char*)mp->b_wptr,RTCP_MAX_RECV_BUFSIZE,0);
+			error=rtp_session_rtp_recv_abstract(session->rtcp.socket, mp, 0, NULL, NULL);
 		}else {
 			addrlen=sizeof (remaddr);
 
@@ -1171,15 +1293,14 @@ rtp_session_rtcp_recv (RtpSession * session)
 				  (struct sockaddr *) &remaddr,
 				  &addrlen);
 			else
-			  error=recvfrom (session->rtcp.socket,(char*) mp->b_wptr,
-				  RTCP_MAX_RECV_BUFSIZE, 0,
+			  error=rtp_session_rtp_recv_abstract (session->rtcp.socket,mp, 0,
 				  (struct sockaddr *) &remaddr,
 				  &addrlen);
 		}
 		if (error > 0)
 		{
 			mp->b_wptr += error;
-			process_rtcp_packet( session, mp );
+			if (process_rtcp_packet( session, mp, (struct sockaddr*)&remaddr, addrlen) >= 0)
 			/* post an event to notify the application*/
 			{
 				rtp_session_notify_inc_rtcp(session,mp);

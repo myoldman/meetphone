@@ -62,17 +62,20 @@ typedef struct _JBParameters{
 
 typedef struct _JitterControl
 {
-	int count;
+	unsigned int count;
 	int jitt_comp;   /* the user jitt_comp in miliseconds*/
 	int jitt_comp_ts; /* the jitt_comp converted in rtp time (same unit as timestamp) */
 	int adapt_jitt_comp_ts;
 	int64_t slide;
 	int64_t prev_slide;
 	float jitter;
-	int64_t olddiff;
+	int olddiff;
 	float inter_jitter;	/* interarrival jitter as defined in the RFC */
 	int corrective_step;
 	int corrective_slide;
+	uint64_t cum_jitter_buffer_size; /*in timestamp units*/
+	unsigned int cum_jitter_buffer_count; /*used for computation of jitter buffer size*/
+	int clock_rate;
 	bool_t adaptive;
 	bool_t enabled;
 } JitterControl;
@@ -146,7 +149,7 @@ typedef struct _RtpStream
 	uint32_t last_rcv_SR_ts;     /* NTP timestamp (middle 32 bits) of last received SR */
 	struct timeval last_rcv_SR_time;   /* time at which last SR was received  */
 	uint16_t snd_seq; /* send sequence number */
-	uint64_t last_rtcp_packet_count; /*the sender's octet count in the last sent RTCP SR*/
+	uint32_t last_rtcp_packet_count; /*the sender's octet count in the last sent RTCP SR*/
 	uint32_t sent_payload_bytes; /*used for RTCP sender reports*/
 	unsigned int sent_bytes; /* used for bandwidth estimation */
 	struct timeval send_bw_start; /* used for bandwidth estimation */
@@ -266,6 +269,7 @@ int rtp_session_signal_connect(RtpSession *session,const char *signal_name, RtpC
 int rtp_session_signal_disconnect_by_callback(RtpSession *session,const char *signal_name, RtpCallback cb);
 void rtp_session_set_ssrc(RtpSession *session, uint32_t ssrc);
 uint32_t rtp_session_get_send_ssrc(RtpSession* session);
+uint32_t rtp_session_get_recv_ssrc(RtpSession *session);
 void rtp_session_set_seq_number(RtpSession *session, uint16_t seq);
 uint16_t rtp_session_get_seq_number(RtpSession *session);
 
@@ -302,6 +306,9 @@ ortp_socket_t rtp_session_get_rtcp_socket(const RtpSession *session);
 int rtp_session_set_dscp(RtpSession *session, int dscp);
 int rtp_session_get_dscp(const RtpSession *session);
 
+
+/* Packet info */
+int rtp_session_set_pktinfo(RtpSession *session, int activate);
 
 /* Multicast methods */
 int rtp_session_set_multicast_ttl(RtpSession *session, int ttl);

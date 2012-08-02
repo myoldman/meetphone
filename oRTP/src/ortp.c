@@ -18,7 +18,7 @@
 */
 
 
-#if defined(WIN32) || defined(_WIN32_WCE)
+#ifdef _MSC_VER
 #include "ortp-config-win32.h"
 #elif HAVE_CONFIG_H
 #include "ortp-config.h"
@@ -70,15 +70,16 @@ static bool_t win32_init_sockets(void){
 }
 #endif
 
+static int ortp_initialized=0;
+
 /**
  *	Initialize the oRTP library. You should call this function first before using
  *	oRTP API.
 **/
 void ortp_init()
 {
-	static bool_t initialized=FALSE;
-	if (initialized) return;
-	initialized=TRUE;
+	if (ortp_initialized) return;
+	ortp_initialized++;
 
 #ifdef WIN32
 	win32_init_sockets();
@@ -131,10 +132,16 @@ void ortp_scheduler_init()
 **/
 void ortp_exit()
 {
-	if (__ortp_scheduler!=NULL)
-	{
-		rtp_scheduler_destroy(__ortp_scheduler);
-		__ortp_scheduler=NULL;
+	ortp_initialized--;
+	if (ortp_initialized==0){
+		if (__ortp_scheduler!=NULL)
+		{
+			rtp_scheduler_destroy(__ortp_scheduler);
+			__ortp_scheduler=NULL;
+		}
+#ifdef HAVE_SRTP_SHUTDOWN
+		srtp_shutdown();
+#endif
 	}
 }
 

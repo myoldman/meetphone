@@ -72,7 +72,7 @@ static mblk_t *simulate_bandwidth_limit(RtpSession *session, mblk_t *input){
 	}
 	/*update the budget */
 	elapsed=elapsed_us(&sim->last_check,&current);
-	sim->bit_budget+=(int)(elapsed*(int64_t)sim->params.max_bandwidth)/1000000LL;
+	sim->bit_budget+=(elapsed*(int64_t)sim->params.max_bandwidth)/1000000LL;
 	sim->last_check=current;
 	/* queue the packet for sending*/
 	if (input){
@@ -109,9 +109,19 @@ static mblk_t *simulate_bandwidth_limit(RtpSession *session, mblk_t *input){
 	return output;
 }
 
+static mblk_t *simulate_loss_rate(RtpSession *session, mblk_t *input, int rate){
+	if((rand() % 101) >= rate) {
+		return input;
+	}
+	return NULL;
+}
+
 mblk_t * rtp_session_network_simulate(RtpSession *session, mblk_t *input){
 	OrtpNetworkSimulatorCtx *sim=session->net_sim_ctx;
 	mblk_t *om=NULL;
+	if (sim->params.loss_rate>0){
+		om=simulate_loss_rate(session,input, sim->params.loss_rate);
+	}
 	if (sim->params.max_bandwidth>0){
 		om=simulate_bandwidth_limit(session,input);
 	}

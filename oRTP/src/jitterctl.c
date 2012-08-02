@@ -43,7 +43,10 @@ void jitter_control_init(JitterControl *ctl, int base_jiitt_time, PayloadType *p
 	ctl->jitter=0;
 	ctl->inter_jitter=0;
 	ctl->slide=0;
+	ctl->cum_jitter_buffer_count=0;
+	ctl->cum_jitter_buffer_size=0;
 	if (base_jiitt_time!=-1) ctl->jitt_comp = base_jiitt_time;
+	ctl->clock_rate=8000;
 	/* convert in timestamp unit: */
 	if (payload!=NULL){
 		jitter_control_set_payload(ctl,payload);
@@ -62,6 +65,7 @@ void jitter_control_set_payload(JitterControl *ctl, PayloadType *pt){
 	/*make correction by not less than 10ms */
 	ctl->corrective_step=(int) (0.01 * (float)pt->clock_rate);
 	ctl->adapt_jitt_comp_ts=ctl->jitt_comp_ts;
+	ctl->clock_rate=pt->clock_rate;
 }
 
 
@@ -73,7 +77,8 @@ void jitter_control_dump_stats(JitterControl *ctl){
 /*the goal of this method is to compute "corrective_slide": a timestamp unit'd value to be added
  to recv timestamp to make them reflect the instant they are delivered by the jitter buffer. */
 void jitter_control_update_corrective_slide(JitterControl *ctl){
-	int64_t tmp=(ctl->slide)-ctl->prev_slide;
+	int tmp;
+	tmp=(int)(ctl->slide)-ctl->prev_slide;
 	if (tmp>ctl->corrective_step) {
 		ctl->corrective_slide+=ctl->corrective_step;
 		ctl->prev_slide=ctl->slide+ctl->corrective_step;
@@ -82,6 +87,17 @@ void jitter_control_update_corrective_slide(JitterControl *ctl){
 		ctl->corrective_slide-=ctl->corrective_step;
 		ctl->prev_slide=ctl->slide-ctl->corrective_step;
 	}
+}
+
+void jitter_control_update_size(JitterControl *ctl, queue_t *q){
+	mblk_t *newest=qlast(q);
+	mblk_t *oldest=qbegin(q);
+	uint32_t newest_ts,oldest_ts;
+	if (newest==NULL) return;
+	newest_ts=rtp_get_timestamp(newest);
+	oldest_ts=rtp_get_timestamp(oldest);
+	ctl->cum_jitter_buffer_count++;
+	ctl->cum_jitter_buffer_size+=(uint32_t)(newest_ts-oldest_ts);
 }
 
 /*
@@ -95,11 +111,10 @@ void jitter_control_update_corrective_slide(JitterControl *ctl){
 void jitter_control_new_packet(JitterControl *ctl, uint32_t packet_ts, uint32_t cur_str_ts){
 	int64_t diff=(int64_t)packet_ts - (int64_t)cur_str_ts;
 	double gap,slide;
-	int64_t d;
+	int d;
 	//printf("diff=%g\n",diff);
 	if (ctl->count==0){
-		slide=(double)diff;
-		ctl->slide=ctl->prev_slide=diff;
+		slide=ctl->slide=ctl->prev_slide=diff;
 		ctl->olddiff=diff;
 		ctl->jitter=0;
 	}else{
@@ -109,7 +124,7 @@ void jitter_control_new_packet(JitterControl *ctl, uint32_t packet_ts, uint32_t 
 	gap=gap<0 ? -gap : 0; /*compute only for late packets*/
 	ctl->jitter=(float) ((ctl->jitter*(1-JC_GAMMA)) + (gap*JC_GAMMA));
 	d=diff-ctl->olddiff;
-	ctl->inter_jitter=(float) (ctl->inter_jitter+ (( (float)abs((int)d) - ctl->inter_jitter)*(1/16.0)));
+	ctl->inter_jitter=(float) (ctl->inter_jitter+ (( (float)abs(d) - ctl->inter_jitter)*(1/16.0)));
 	ctl->olddiff=diff;
 	ctl->count++;
 	if (ctl->adaptive){
@@ -118,14 +133,22 @@ void jitter_control_new_packet(JitterControl *ctl, uint32_t packet_ts, uint32_t 
 			//jitter_control_dump_stats(ctl);
 		}
 		
-		ctl->slide=(int64_t)slide;
+		ctl->slide=slide;
 	}else {
 		/*ctl->slide and jitter size are not updated*/
 	}
 	return ;
 }
 
-
+float jitter_control_compute_mean_size(JitterControl *ctl){
+	if (ctl->cum_jitter_buffer_count!=0){
+		double tmp=((double)ctl->cum_jitter_buffer_size)/(double)ctl->cum_jitter_buffer_count;
+		ctl->cum_jitter_buffer_size=0;
+		ctl->cum_jitter_buffer_count=0;
+		return 1000.0*(float)tmp/(float)ctl->clock_rate;
+	}
+	return 0;
+}
 
 
 
