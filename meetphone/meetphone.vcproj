@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;..\coreapi;..\mediastreamer2\include;..\ortp\include;..\jsoncpp\include;..\3rdparty\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;IN_LINPHONE;WINDOW_NATIVE;_CRT_SECURE_NO_WARNINGS;ENABLE_NLS;GETTEXT_PACKAGE=\&quot;meetphone\&quot;;PACKAGE_LOCALE_DIR=\&quot;locale\&quot;;MS2_INTERNAL"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;IN_LINPHONE;WINDOW_NATIVE;_CRT_SECURE_NO_WARNINGS;ENABLE_NLS;GETTEXT_PACKAGE=\&quot;meetphone\&quot;;PACKAGE_LOCALE_DIR=\&quot;locale\&quot;;MS2_INTERNAL;ESL_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -69,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="coreapi.lib mediastreamer2.lib ortp.lib intl.lib uxtheme.lib json_vc71_libmtd.lib"
+				AdditionalDependencies="coreapi.lib mediastreamer2.lib ortp.lib intl.lib uxtheme.lib json_vc71_libmtd.lib esl.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)$(ConfigurationName)&quot;;..\3rdparty\lib"
 				DelayLoadDLLs=""
@@ -240,6 +240,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\meetphonepassword.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\meetphonertspaddr.cpp"
 				>
 			</File>
@@ -335,6 +339,10 @@
 			</File>
 			<File
 				RelativePath=".\meetphonenetwork.h"
+				>
+			</File>
+			<File
+				RelativePath=".\meetphonepassword.h"
 				>
 			</File>
 			<File

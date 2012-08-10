@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(Cmeetphonemeet, CDialog)
 	ON_MESSAGE(WM_MEMBER_ADD,OnMemberAdd)
 	ON_MESSAGE(WM_MEMBER_PREVIEW_HWND, OnMemberPreviewHwnd)
 	ON_MESSAGE(WM_MEMBER_RELOAD, OnMemberReloadMsg)
+	ON_MESSAGE(WM_MEMBER_DELETE, OnMemberDelete)
 	ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_MEMBER, &Cmeetphonemeet::OnLvnDeleteitemListMember)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_MEMBER, &Cmeetphonemeet::OnNMClickListMember)
 END_MESSAGE_MAP()
@@ -100,13 +101,13 @@ BOOL Cmeetphonemeet::ReloadMemberList()
 			int real_index = 0;
 			for ( unsigned int index = 0; index < response.size(); ++index ) 
 			{
+				
 				const char* strName = response[index]["name"].asCString();
 				const char *ip = response[index]["ip"].asCString();
 				const char *state = response[index]["state"].asCString();
 				int memberId = response[index]["id"].asInt();
 				bool muted = response[index]["ismute"].asBool();
-				if(state != NULL && strcasecmp("CONNECTED", state) == 0) 
-				{
+				if(state != NULL && strcasecmp("CONNECTED", state) == 0) {
 					state = _(state);
 				} else {
 					continue;
@@ -164,13 +165,14 @@ void Cmeetphonemeet::OnClose()
 {
 	ShowWindow(SW_HIDE);
 	CDialog::OnClose();
-	CDialog::OnDestroy();
+	//CDialog::OnDestroy();
 	LinphoneCore *lc = theApp.GetCore();
 	LinphoneCall *call = call=linphone_core_get_current_call(lc);
 	if (call!=NULL)
 	{
 		linphone_core_terminate_call(lc,call);
 	}
+	linphone_core_terminate_all_calls(lc);
 	//DestroyWindow();
 }
 
@@ -189,6 +191,23 @@ HWND Cmeetphonemeet::AddMeetMember(CString &memberName)
 	memberDlg->ShowWindow(SW_SHOW);
 	m_ListMember.AddTail(memberDlg);
 	return memberDlg->m_hWnd;
+}
+
+HWND Cmeetphonemeet::DeleteMeetMember(CString &memberName)
+{
+	for   (int   i=0;   i   <   m_ListMember.GetCount();i++   ) 
+	{ 
+	  POSITION   pos   =   m_ListMember.FindIndex(i); 
+	  Cmeetphonemember* ptr   =   m_ListMember.GetAt(pos); 
+	  if   (ptr->m_sMemberName   ==   memberName) 
+	  { 
+		m_ListMember.RemoveAt(pos);
+		ptr->DestroyWindow();
+		delete ptr;
+		break;
+	  } 
+	} 
+	return 0;
 }
 
 LONG Cmeetphonemeet::OnMemberMaximizeMsg(WPARAM wP, LPARAM lP)
@@ -240,6 +259,12 @@ LRESULT Cmeetphonemeet::OnMemberAdd(WPARAM wP,LPARAM lP)
 {
 	CString *memberName = (CString *)wP;
 	return (unsigned long)AddMeetMember(*memberName);
+}
+
+LRESULT Cmeetphonemeet::OnMemberDelete(WPARAM wP,LPARAM lP)
+{
+	CString *memberName = (CString *)wP;
+	return (unsigned long)DeleteMeetMember(*memberName);
 }
 
 LRESULT Cmeetphonemeet::OnMemberPreviewHwnd(WPARAM wP,LPARAM lP)

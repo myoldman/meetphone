@@ -229,7 +229,7 @@ typedef void (*SalOnVfuRequest)(SalOp *op);
 typedef void (*SalOnDtmfReceived)(SalOp *op, char dtmf);
 typedef void (*SalOnRefer)(Sal *sal, SalOp *op, const char *referto);
 typedef void (*SalOnTextReceived)(Sal *sal, const char *from, const char *msg);
-typedef void (*SalOnNotify)(SalOp *op, const char *from, const char *value);
+typedef void (*SalOnNotify)(SalOp *op, const char *from, const char *value, int partId);
 typedef void (*SalOnNotifyPresence)(SalOp *op, SalSubscribeState ss, SalPresenceStatus status, const char *msg);
 typedef void (*SalOnSubscribeReceived)(SalOp *salop, const char *from);
 typedef void (*SalOnSubscribeClosed)(SalOp *salop, const char *from);
@@ -308,9 +308,11 @@ void sal_op_authenticate(SalOp *h, const SalAuthInfo *info);
 void sal_op_cancel_authentication(SalOp *h);
 void sal_op_set_user_pointer(SalOp *h, void *up);
 void sal_op_set_desktop_share(SalOp *op, bool_t is_desktop_share);// added by liuhong for desktop share
+void sal_op_set_spy(SalOp *op, bool_t is_spy);// added by liuhong for spy
+void sal_op_set_spy_number(SalOp *op, int spy_number);// added by liuhong for spy
 int sal_op_get_auth_requested(SalOp *h, const char **realm, const char **username);
-const char *sal_op_get_from(const SalOp *op);
-const char *sal_op_get_to(const SalOp *op);
+MS2_PUBLIC const char *sal_op_get_from(const SalOp *op);
+MS2_PUBLIC const char *sal_op_get_to(const SalOp *op);
 const char *sal_op_get_contact(const SalOp *op);
 const char *sal_op_get_route(const SalOp *op);
 const char *sal_op_get_proxy(const SalOp *op);

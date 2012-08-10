@@ -260,6 +260,20 @@ BEGIN
     CONTROL         "",IDC_LIST_MEMBER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,8,69,202,154
 END
 
+IDD_MEETPHONE_PASSWORD DIALOGEX 0, 0, 196, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "请输入密码"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,82,99,50,14
+    PUSHBUTTON      "取消",IDCANCEL,141,99,50,14
+    CTEXT           "请输入用户名和密码",IDC_STATIC,5,9,186,12
+    CTEXT           "用户名:",IDC_STATIC,4,37,52,19
+    CTEXT           "密码:",IDC_STATIC,4,68,52,19
+    EDITTEXT        IDC_USERNAME,56,37,135,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORD,56,68,135,16,ES_PASSWORD | ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -361,17 +375,17 @@ END
 // Menu
 //
 
-IDR_MENU_MAIN MENUEX 
+IDR_MENU_MAIN MENU 
 BEGIN
-    POPUP "选项",                             65535,MFT_STRING,MFS_ENABLED
+    POPUP "选项"
     BEGIN
-        MENUITEM "首选项",                         ID_SETTING,MFT_STRING,MFS_ENABLED
-        MENUITEM "登出",                          ID_LOGOUT,MFT_STRING,MFS_GRAYED
+        MENUITEM "首选项",                         ID_SETTING
+        MENUITEM "登出",                          ID_LOGOUT, INACTIVE
     END
-    POPUP "帮助",                             65535,MFT_STRING,MFS_ENABLED
+    POPUP "帮助"
     BEGIN
-        MENUITEM "调试信息",                        ID_MENU_DEBUG,MFT_STRING,MFS_ENABLED
-        MENUITEM "关于",                          ID_MENU_ABOUT,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+        MENUITEM "调试信息",                        ID_MENU_DEBUG
+        MENUITEM "关于",                          ID_MENU_ABOUT
     END
 END
 

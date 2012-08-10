@@ -277,9 +277,9 @@ static RtpSession * create_duplex_rtpsession( int locport, bool_t ipv6){
 	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
 	rtp_session_set_scheduling_mode(rtpr,0);
 	rtp_session_set_blocking_mode(rtpr,0);
-	//const int socket_buf_size=1000000;
-	//rtp_session_set_rtp_socket_recv_buffer_size(rtpr,socket_buf_size);
-	//rtp_session_set_rtp_socket_send_buffer_size(rtpr,socket_buf_size);
+	const int socket_buf_size=1000000;
+	rtp_session_set_rtp_socket_recv_buffer_size(rtpr,socket_buf_size);
+	rtp_session_set_rtp_socket_send_buffer_size(rtpr,socket_buf_size);
 	rtp_session_enable_adaptive_jitter_compensation(rtpr,TRUE);
 	rtp_session_set_symmetric_rtp(rtpr,TRUE);
 	rtp_session_set_local_addr(rtpr,ipv6 ? "::" : "0.0.0.0",locport);

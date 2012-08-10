@@ -274,6 +274,9 @@ static void dd_display_unprepare(MSFilter *f){
 		DestroyWindow(dd->window);
 		dd->window=NULL;
 	}
+	if(dd->window!=NULL){
+		SetWindowLong(dd->window,GWL_USERDATA,0);
+	}
 	if (dd->ddh!=NULL){
 		DrawDibClose(dd->ddh);
 		dd->ddh=NULL;

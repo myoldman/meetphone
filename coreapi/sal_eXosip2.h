@@ -80,6 +80,8 @@ struct SalOp{
 	bool_t auto_answer_asked;
 	bool_t terminated;
 	bool_t is_desktop_share;// added by liuhong for desktop share
+	bool_t is_spy;// added by liuhong for spy
+	int spy_number;// added by liuhong for spy
 	const SalAuthInfo *auth_info;
 };
 

@@ -367,7 +367,7 @@ static void call_accepted(SalOp *op){
 			}
 			linphone_core_update_streams (lc,call,md);
 			linphone_call_set_state(call, LinphoneCallStreamsRunning, "Streams running");
-			if (!call->current_params.in_conference && !call->params.is_desktop_share)// added by liuhong for desktop share
+			if (!call->current_params.in_conference && !call->params.is_desktop_share && !call->params.is_spy)// added by liuhong for desktop share
 				lc->current_call=call;
 		}
 	}else{
@@ -717,12 +717,12 @@ static void text_received(Sal *sal, const char *from, const char *msg){
 	linphone_core_text_received(lc,from,msg);
 }
 
-static void notify(SalOp *op, const char *from, const char *msg){
+static void notify(SalOp *op, const char *from, const char *msg, int partId){
 	LinphoneCore *lc=(LinphoneCore *)sal_get_user_pointer(sal_op_get_sal(op));
 	LinphoneCall *call=(LinphoneCall*)sal_op_get_user_pointer (op);
 	ms_message("get a %s notify from %s",msg,from);
 	if(lc->vtable.notify_recv)
-		lc->vtable.notify_recv(lc,call,from,msg);
+		lc->vtable.notify_recv(lc,call,from,msg, partId);
 }
 
 static void notify_presence(SalOp *op, SalSubscribeState ss, SalPresenceStatus status, const char *msg){

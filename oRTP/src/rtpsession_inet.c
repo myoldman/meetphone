@@ -1331,7 +1331,7 @@ rtp_session_rtcp_recv (RtpSession * session)
 				if (session->on_network_error.count>0){
 					rtp_signal_table_emit3(&session->on_network_error,(long)"Error receiving RTCP packet",INT_TO_POINTER(errnum));
 				}else ortp_warning("Error receiving RTCP packet: %s.",getSocketError());
-				session->rtp.recv_errno=errnum;
+				//session->rtp.recv_errno=errnum;
 			}
 			/* don't free the cached_mp, it will be reused next time */
 			return -1;	/* avoids an infinite loop ! */

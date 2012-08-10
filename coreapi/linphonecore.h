@@ -80,11 +80,11 @@ typedef struct SalAddress LinphoneAddress;
 #include "linphone/linphonefriend.h"
 #endif
 
-LinphoneAddress * linphone_address_new(const char *uri);
+MS2_PUBLIC LinphoneAddress * linphone_address_new(const char *uri);
 LinphoneAddress * linphone_address_clone(const LinphoneAddress *uri);
 const char *linphone_address_get_scheme(const LinphoneAddress *u);
 const char *linphone_address_get_display_name(const LinphoneAddress* u);
-const char *linphone_address_get_username(const LinphoneAddress *u);
+MS2_PUBLIC const char *linphone_address_get_username(const LinphoneAddress *u);
 const char *linphone_address_get_domain(const LinphoneAddress *u);
 /**
  * Get port number as an integer value.
@@ -96,7 +96,7 @@ int linphone_address_get_port_int(const LinphoneAddress *u);
  */
 const char* linphone_address_get_port(const LinphoneAddress *u);
 void linphone_address_set_display_name(LinphoneAddress *u, const char *display_name);
-void linphone_address_set_username(LinphoneAddress *uri, const char *username);
+MS2_PUBLIC void linphone_address_set_username(LinphoneAddress *uri, const char *username);
 void linphone_address_set_domain(LinphoneAddress *uri, const char *host);
 void linphone_address_set_port(LinphoneAddress *uri, const char *port);
 void linphone_address_set_port_int(LinphoneAddress *uri, int port);
@@ -105,7 +105,7 @@ void linphone_address_clean(LinphoneAddress *uri);
 char *linphone_address_as_string(const LinphoneAddress *u);
 char *linphone_address_as_string_uri_only(const LinphoneAddress *u);
 bool_t linphone_address_weak_equal(const LinphoneAddress *a1, const LinphoneAddress *a2);
-void linphone_address_destroy(LinphoneAddress *u);
+MS2_PUBLIC void linphone_address_destroy(LinphoneAddress *u);
 
 struct _SipSetupContext;
 
@@ -251,6 +251,7 @@ bool_t linphone_call_is_rtsp_call(LinphoneCall *call);// added by liuhong for rt
 MS2_PUBLIC char *linphone_call_get_rtsp_name(LinphoneCall *call);// added by liuhong for rtsp
 char *linphone_call_get_conf_uid(LinphoneCall *call);// added by liuhong for rtsp
 MS2_PUBLIC bool_t linphone_call_is_desktop_share(LinphoneCall *call);//added by liuhong for desktop share
+MS2_PUBLIC bool_t linphone_call_is_spy(LinphoneCall *call);//added by liuhong for spy
 MS2_PUBLIC void linphone_core_set_cam_name(LinphoneCore *lc, const char *id, const char *name);// added by liuhong for rtsp
 MS2_PUBLIC void toggle_video_preview(LinphoneCore *lc, bool_t val);
 const LinphoneAddress * linphone_core_get_current_call_remote_address(struct _LinphoneCore *lc);
@@ -475,7 +476,7 @@ struct _LinphoneAuthInfo;
 **/
 typedef struct _LinphoneAuthInfo LinphoneAuthInfo;
 
-LinphoneAuthInfo *linphone_auth_info_new(const char *username, const char *userid,
+MS2_PUBLIC LinphoneAuthInfo *linphone_auth_info_new(const char *username, const char *userid,
 		const char *passwd, const char *ha1,const char *realm);
 void linphone_auth_info_set_passwd(LinphoneAuthInfo *info, const char *passwd);
 void linphone_auth_info_set_username(LinphoneAuthInfo *info, const char *username);
@@ -576,7 +577,7 @@ typedef void (*DisplayUrlCb)(struct _LinphoneCore *lc, const char *message, cons
 /** Callback prototype */
 typedef void (*LinphoneCoreCbFunc)(struct _LinphoneCore *lc,void * user_data);
 /** Callback prototype */
-typedef void (*NotifyReceivedCb)(struct _LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event);
+typedef void (*NotifyReceivedCb)(struct _LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event, int partId);
 /**
  * Report status change for a friend previously \link linphone_core_add_friend() added \endlink to #LinphoneCore.
  * @param lc #LinphoneCore object .
@@ -684,6 +685,7 @@ MS2_PUBLIC LinphoneCall * linphone_core_invite(LinphoneCore *lc, const char *url
 
 // added by liuhong for desktop share
 MS2_PUBLIC LinphoneCall * linphone_core_invite_desktop_share(LinphoneCore *lc, const char *url);
+MS2_PUBLIC LinphoneCall * linphone_core_invite_spy(LinphoneCore *lc, const char*url, int spy_number);
 
 // add for rtsp by liuhong start
 MS2_PUBLIC LinphoneCall * linphone_core_rtsp_desc(LinphoneCore *lc, const char *url, const char *name);
@@ -714,7 +716,7 @@ MS2_PUBLIC int linphone_core_terminate_call(LinphoneCore *lc, LinphoneCall *call
 
 int linphone_core_redirect_call(LinphoneCore *lc, LinphoneCall *call, const char *redirect_uri);
 
-int linphone_core_terminate_all_calls(LinphoneCore *lc);
+MS2_PUBLIC int linphone_core_terminate_all_calls(LinphoneCore *lc);
 
 int linphone_core_pause_call(LinphoneCore *lc, LinphoneCall *call);
 
@@ -802,7 +804,7 @@ MS2_PUBLIC void linphone_core_set_default_proxy_index(LinphoneCore *lc, int inde
 
 MS2_PUBLIC int linphone_core_get_default_proxy(LinphoneCore *lc, LinphoneProxyConfig **config);
 
-void linphone_core_add_auth_info(LinphoneCore *lc, const LinphoneAuthInfo *info);
+MS2_PUBLIC void linphone_core_add_auth_info(LinphoneCore *lc, const LinphoneAuthInfo *info);
 
 void linphone_core_remove_auth_info(LinphoneCore *lc, const LinphoneAuthInfo *info);
 
@@ -810,7 +812,7 @@ const MSList *linphone_core_get_auth_info_list(const LinphoneCore *lc);
 
 const LinphoneAuthInfo *linphone_core_find_auth_info(LinphoneCore *lc, const char *realm, const char *username);
 
-void linphone_core_abort_authentication(LinphoneCore *lc,  LinphoneAuthInfo *info);
+MS2_PUBLIC void linphone_core_abort_authentication(LinphoneCore *lc,  LinphoneAuthInfo *info);
 
 void linphone_core_clear_all_auth_info(LinphoneCore *lc);
 

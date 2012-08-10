@@ -2166,6 +2166,9 @@ int linphone_core_start_invite(LinphoneCore *lc, LinphoneCall *call, LinphonePro
 	from=linphone_address_as_string(call->log->from);
 	// added by liuhong for desktop share
 	sal_op_set_desktop_share(call->op, call->params.is_desktop_share);
+	// added by liuhong for spy
+	sal_op_set_spy(call->op, call->params.is_spy);
+	sal_op_set_spy_number(call->op, call->params.spy_number);
 	err=sal_call(call->op,from,real_url);
 
 	if (lc->sip_conf.sdp_200_ack){
@@ -2214,6 +2217,22 @@ LinphoneCall *linphone_core_invite_desktop_share(LinphoneCore *lc, const char *u
 	LinphoneCall *call;
 	LinphoneCallParams *p=linphone_core_create_default_call_parameters (lc);
 	p->is_desktop_share = TRUE;
+	LinphoneAddress *addr=linphone_core_interpret_url(lc,url);
+	if (addr){
+		call=linphone_core_invite_address_with_params(lc,addr,p);
+		linphone_address_destroy(addr);
+	} else {
+		call = NULL;
+	}
+	linphone_call_params_destroy(p);
+	return call;
+}
+
+LinphoneCall * linphone_core_invite_spy(LinphoneCore *lc, const char*url, int spy_number){
+	LinphoneCall *call;
+	LinphoneCallParams *p=linphone_core_create_default_call_parameters (lc);
+	p->is_spy = TRUE;
+	p->spy_number = spy_number;
 	LinphoneAddress *addr=linphone_core_interpret_url(lc,url);
 	if (addr){
 		call=linphone_core_invite_address_with_params(lc,addr,p);
@@ -2495,7 +2514,7 @@ LinphoneCall * linphone_core_invite_address_with_params(LinphoneCore *lc, const 
 	LinphoneProxyConfig *dest_proxy=NULL;
 	LinphoneCall *call;
 
-	if(!params->is_desktop_share)//added by liuhong for desktop share
+	if(!params->is_desktop_share && !params->is_spy)//added by liuhong for desktop share
 		linphone_core_preempt_sound_resources(lc);
 	
 	if(!linphone_core_can_we_add_call(lc)){
@@ -2534,7 +2553,7 @@ LinphoneCall * linphone_core_invite_address_with_params(LinphoneCore *lc, const 
 		return NULL;
 	}
 	/* this call becomes now the current one*/
-	if(!params->is_desktop_share)// added by liuhong for desktop share
+	if(!params->is_desktop_share && !params->is_spy )// added by liuhong for desktop share
 		lc->current_call=call;
 	linphone_call_set_state (call,LinphoneCallOutgoingInit,"Starting outgoing call");
 	if (dest_proxy!=NULL || lc->sip_conf.ping_with_options==FALSE){
@@ -5045,5 +5064,7 @@ void linphone_core_init_default_params(LinphoneCore*lc, LinphoneCallParams *para
 	params->media_encryption=linphone_core_get_media_encryption(lc);	
 	params->in_conference=FALSE;
 	params->is_desktop_share=FALSE;
+	params->is_spy = FALSE;
+	params->spy_number = 0;
 }
 

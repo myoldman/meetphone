@@ -215,7 +215,7 @@ static SalMediaDescription *_create_local_media_description(LinphoneCore *lc, Li
 	pt=payload_type_clone(rtp_profile_get_payload_from_mime(&av_profile,"telephone-event"));
 	l=ms_list_append(l,pt);
 	md->streams[0].payloads=l;
-	if(call->params.is_desktop_share) {
+	if(call->params.is_desktop_share || call->params.is_spy) {
 		md->streams[0].dir = SalStreamInactive;
 	}
 
@@ -229,6 +229,9 @@ static SalMediaDescription *_create_local_media_description(LinphoneCore *lc, Li
 		md->streams[1].payloads=l;
 		if(call->params.is_desktop_share) {
 			md->streams[1].dir = SalStreamSendOnly;//added by liuhong for desktop share
+		}
+		if(call->params.is_spy){
+			md->streams[0].dir = SalStreamRecvOnly;// added by liuhong for spy
 		}
 	}
 	
@@ -595,6 +598,11 @@ bool_t linphone_call_is_rtsp_call(LinphoneCall *call) {
 bool_t linphone_call_is_desktop_share(LinphoneCall *call) {
 	return call->params.is_desktop_share;
 }
+
+bool_t linphone_call_is_spy(LinphoneCall *call) {
+	return call->params.is_spy;
+}
+
 
 char *linphone_call_get_rtsp_name(LinphoneCall *call) {
 	return call->rtsp_endpoint_name;
@@ -1260,6 +1268,9 @@ static void linphone_call_start_video_stream(LinphoneCall *call, const char *cna
 					cam = ms_web_cam_new(&ms_push_source_cam_desc);
 					cam->name=ms_strdup("Desktop Capture");
 #endif
+				}
+				if(call->params.is_spy){
+					call->videostream->dir = VideoStreamRecvOnly;//added by liuhong for spy
 				}
 				video_stream_set_device_rotation(call->videostream, lc->device_rotation);
 				video_stream_start(call->videostream,

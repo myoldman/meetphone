@@ -187,7 +187,6 @@ BOOL CmeetphonemainDlg::OnInitDialog()
 	m_hActionImage.Create(16, 16, ILC_COLOR32,  2, 4);
 	load_png_to_imagelist(m_hActionImage,CString("res/webphone_16.png"));
 	load_png_to_imagelist(m_hActionImage, CString("res/delete.png"));
-
 	InitConferenceList();
 	InitMemberList();
 	ReloadConferenceList();
@@ -344,5 +343,7 @@ void CmeetphonemainDlg::OnBnClickedCreate()
 
 void CmeetphonemainDlg::OnBnClickedRefresh()
 {
+	LinphoneCore *lc = theApp.GetCore();
+	linphone_core_invite(lc, "11100");
 	ReloadConferenceList();
 }

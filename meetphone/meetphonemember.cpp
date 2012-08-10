@@ -119,6 +119,7 @@ void Cmeetphonemember::OnPaint()
 	CPaintDC dc(this);
 	DDDisplay *wd=(DDDisplay*)GetWindowLongPtr(m_hWnd,GWLP_USERDATA);
 	if (wd!=NULL){
+		wd->autofit = FALSE;
 		CW2A memberName(m_sMemberName);
 		strcpy(wd->window_title, memberName);
 		if(wd->volume_png == NULL) {
@@ -167,6 +168,8 @@ void Cmeetphonemember::OnTimer(UINT_PTR nIDEvent)
 	if (wd!=NULL){
 		LinphoneCore *lc = theApp.GetCore();
 		LinphoneCall *call = linphone_core_get_current_call(lc);
+		if(call == NULL)
+			return;
 		float volume_db = 0.0f;
 		if(m_sMemberName == _T("±æµÿ ”∆µ"))
 		{

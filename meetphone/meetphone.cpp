@@ -106,7 +106,7 @@ BOOL CmeetphoneApp::InitCoreapi()
 	//vtable.notify_presence_recv=linphone_gtk_notify_recv;
 	vtable.notify_recv=MeetphoneNotifyRecvConf;
 	//vtable.new_subscription_request=linphone_gtk_new_unknown_subscriber;
-	//vtable.auth_info_requested=linphone_gtk_auth_info_requested;
+	vtable.auth_info_requested=MeephoneAuthInfoRequest;
 	vtable.display_status=MeetphoneDisplayStatus;
 	//vtable.display_message=linphone_gtk_display_message;
 	//vtable.display_warning=linphone_gtk_display_warning;
@@ -124,8 +124,8 @@ BOOL CmeetphoneApp::InitCoreapi()
 	m_nLogTimerID = SetTimer(NULL,NULL,30,MeetphoneLog);
 	if (linphone_core_video_enabled(m_pCore)){
 		linphone_core_use_preview_window(m_pCore, TRUE);
-		linphone_core_enable_video_preview(m_pCore,meetphone_get_ui_config_int("videoselfview",
-	    	VIDEOSELFVIEW_DEFAULT));
+		//linphone_core_enable_video_preview(m_pCore,meetphone_get_ui_config_int("videoselfview",
+	    //	VIDEOSELFVIEW_DEFAULT));
 	}
 	return TRUE;
 }
@@ -162,6 +162,7 @@ BOOL CmeetphoneApp::InitInstance()
 	m_pLogWnd->Create(IDD_MEETPHONE_LOG,NULL);
 
 	InitCoreapi();
+	MeetphoneEslInit();
 
 	m_pSettingWnd = new Cmeetphonesetting(NULL);
 	m_pSettingWnd->Create(IDD_MEETPHONE_SETTING,NULL);
@@ -189,6 +190,8 @@ BOOL CmeetphoneApp::InitInstance()
 	m_pSettingWnd->DestroyWindow();
 	delete m_pSettingWnd;
 	
+	MeetphoneEslUninit();
+
 	Gdiplus::GdiplusShutdown(m_gdiplusToken);
 
 	return FALSE;

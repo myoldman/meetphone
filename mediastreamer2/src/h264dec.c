@@ -255,7 +255,7 @@ static void dec_process(MSFilter *f){
 			int size;
 			uint8_t *p,*end;
 			bool_t need_reinit=FALSE;
-
+			//ms_message("begin decode");
 			size=nalusToFrame(d,&nalus,&need_reinit);
 			if (need_reinit)
 				dec_reinit(d);

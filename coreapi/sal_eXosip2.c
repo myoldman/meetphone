@@ -601,6 +601,12 @@ int sal_call(SalOp *h, const char *from, const char *to){
 		osip_message_set_header(invite,"desktop_share","true");
 	}
 	
+	if(h->is_spy){
+		char spy_number[10];
+		sprintf(spy_number, "%d", h->spy_number);
+		osip_message_set_header(invite,"spy_number",spy_number);
+	}
+	
 	eXosip_lock();
 	err=eXosip_call_send_initial_invite(invite);
 	eXosip_unlock();
@@ -1308,6 +1314,17 @@ void sal_op_set_desktop_share(SalOp *op, bool_t is_desktop_share) {
 	op->is_desktop_share = is_desktop_share;
 }
 
+// added by liuhong for spy
+void sal_op_set_spy(SalOp *op, bool_t is_spy) {
+	op->is_spy = is_spy;
+}
+
+// added by liuhong for spy
+void sal_op_set_spy_number(SalOp *op, int spy_number) {
+	op->spy_number = spy_number;
+}
+
+
 static bool_t process_authentication(Sal *sal, eXosip_event_t *ev){
 	SalOp *op;
 	const char *username,*realm;
@@ -1620,6 +1637,7 @@ static void call_message_new(Sal *sal, eXosip_event_t *ev){
 			process_refer(sal,op,ev);
 		}else if(MSG_IS_NOTIFY(ev->request)){
 			osip_header_t *h=NULL;
+			osip_header_t *h_partid=NULL;
 			char *from=NULL;
 			osip_header_t *uid=NULL;
 			SalOp *op=find_op(sal,ev);
@@ -1630,10 +1648,10 @@ static void call_message_new(Sal *sal, eXosip_event_t *ev){
 			ms_message("Receiving NOTIFY request %s!", call->conf_uid);
 			osip_from_to_str(ev->request->from,&from);
 			osip_message_header_get_byname(ev->request,"Event",0,&h);
-			
+			osip_message_header_get_byname(ev->request,"partId",0,&h_partid);
 
-			if(h)
-				sal->callbacks.notify(op,from,h->hvalue);
+			if(h && h_partid)
+				sal->callbacks.notify(op,from,h->hvalue, atoi(h_partid->hvalue));
 			/*answer that we received the notify*/
 			eXosip_lock();
 			eXosip_call_build_answer(ev->tid,200,&ans);

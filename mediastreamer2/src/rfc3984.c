@@ -242,7 +242,7 @@ void rfc3984_unpack(Rfc3984Context *ctx, mblk_t *im, MSQueue *out){
 	uint8_t *p;
 	int marker = mblk_get_marker_info(im);
 	uint32_t ts=mblk_get_timestamp_info(im);
-
+	//ms_message("packet ts %d", ts);
 	if (ctx->last_ts!=ts){
 		/*a new frame is arriving, in case the marker bit was not set in previous frame, output it now*/
 		/* unless this is a FU-A (workarond some other apps bugs)*/
@@ -296,8 +296,9 @@ void rfc3984_unpack(Rfc3984Context *ctx, mblk_t *im, MSQueue *out){
 	}
 
 	if (marker){
+	//if (marker && ctx->last_ts != ts){
 		ctx->last_ts=ts;
-		ms_debug("Marker bit set");
+		//ms_message("Marker bit set");
 		/*end of frame, output everything*/
 		while(!ms_queue_empty(&ctx->q)){
 			ms_queue_put(out,ms_queue_get(&ctx->q));

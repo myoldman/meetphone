@@ -74,6 +74,8 @@ struct _LinphoneCallParams{
 	bool_t in_conference; /*in conference mode */
 	bool_t pad;
 	bool_t is_desktop_share;// added by liuhong for desktop share
+	bool_t is_spy;// added by liuhong for spy
+	int spy_number;// added by liuhong for spy
 };
 
 struct _LinphoneCall
